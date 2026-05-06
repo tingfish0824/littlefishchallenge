@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🐠 小魚養成資格審查</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#040d18;--deep:#071525;--mid:#0d2240;
+  --teal:#0fb87a;--teal-d:#0a8a5c;--teal-l:#4dd9a8;--teal-xl:#a8f0d8;
+  --coral:#e05a3a;--coral-l:#f09070;--amber:#f0a030;--red:#e03a3a;
+  --txt:#e8f4ff;--txt2:#7eb8d8;--txt3:#3a6a88;
+  --bb:rgba(255,255,255,0.1);--cbg:rgba(10,28,55,0.92);
+  --serif:'Noto Serif TC',serif;--sans:'Noto Sans TC',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--ink);color:var(--txt);font-family:var(--sans);position:relative}
+
+#bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 90%,rgba(15,184,122,0.12) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 45% at 90% 10%,rgba(20,70,160,0.2) 0%,transparent 55%),
+    radial-gradient(ellipse 100% 100% at 50% 50%,#071525 30%,#040d18 100%);
+}
+#bg::after{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.007) 2px,rgba(255,255,255,0.007) 4px);
+  pointer-events:none}
+
+.bbl{position:fixed;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.12),rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.07);
+  animation:rise linear infinite;pointer-events:none;z-index:1}
+@keyframes rise{
+  0%{transform:translateY(100vh) translateX(0) scale(0.3);opacity:0}
+  10%{opacity:0.8}90%{opacity:0.2}
+  100%{transform:translateY(-10vh) translateX(15px) scale(1);opacity:0}}
+
+#app{position:relative;z-index:2;max-width:440px;margin:0 auto;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+.scr{display:none;flex-direction:column;height:100%;overflow-y:auto;padding:0 0 48px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+.scr.on{display:flex}
+.pad{padding:22px 22px 0}
+
+.topbar{display:flex;align-items:center;gap:12px;padding:15px 20px 13px;
+  border-bottom:1px solid var(--bb);flex-shrink:0;position:sticky;top:0;
+  background:rgba(4,13,24,0.88);backdrop-filter:blur(14px);z-index:10}
+.back{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.05);
+  border:1px solid var(--bb);color:var(--txt2);font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.18s}
+.back:active{background:rgba(255,255,255,0.1);transform:scale(0.93)}
+.tb-mid{flex:1;text-align:center}
+.tb-t{font-size:12px;color:var(--txt3);letter-spacing:0.08em}
+.tb-s{font-size:10px;color:var(--txt3);opacity:0.55;margin-top:1px}
+
+.dots{display:flex;gap:5px;align-items:center;justify-content:center;padding:12px 22px 0;flex-shrink:0}
+.dot{height:4px;border-radius:2px;background:rgba(255,255,255,0.1);transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1);width:16px}
+.dot.done{background:var(--teal);width:16px}
+.dot.cur{background:var(--teal-l);width:26px;box-shadow:0 0 8px var(--teal)}
+.dot.off{width:5px}
+
+.hero{text-align:center;padding:28px 0 16px}
+.fish{font-size:68px;display:inline-block;filter:drop-shadow(0 0 18px rgba(15,184,122,0.4));animation:fl 4s ease-in-out infinite;transition:all 0.8s}
+@keyframes fl{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-12px) rotate(-5deg)}65%{transform:translateY(5px) rotate(3deg)}}
+.fish.s0{animation:fc 2.5s ease-in-out infinite;filter:drop-shadow(0 0 26px rgba(15,184,122,0.65))}
+@keyframes fc{0%,100%{transform:translateY(0) translateX(0) rotate(0)}35%{transform:translateY(-14px) translateX(10px) rotate(-6deg)}70%{transform:translateY(4px) translateX(5px) rotate(3deg)}}
+.fish.s2{animation:fq 6s ease-in-out infinite;filter:drop-shadow(0 0 10px rgba(15,184,122,0.2))}
+@keyframes fq{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.fish.s3{animation:fg 1.8s ease-in-out infinite;filter:drop-shadow(0 0 14px rgba(240,160,48,0.5))}
+@keyframes fg{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.fish.s4{animation:fs 1.2s ease-in-out infinite;filter:drop-shadow(0 0 16px rgba(224,58,58,0.5))}
+@keyframes fs{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(4px) rotate(6deg)}60%{transform:translateY(-3px) rotate(-4deg)}}
+.fish.s5{animation:fle 4s ease-in forwards}
+@keyframes fle{0%{transform:translateX(0) scaleX(1);opacity:1}40%{transform:translateX(-30px) scaleX(-1);opacity:0.7}100%{transform:translateX(160px) scaleX(-1);opacity:0}}
+
+.card{background:var(--cbg);border:1px solid rgba(15,184,122,0.18);border-radius:16px;padding:18px 20px;backdrop-filter:blur(10px);margin-bottom:12px}
+.card-hi{background:rgba(15,184,122,0.07);border-color:rgba(15,184,122,0.32)}
+.card-warn{background:rgba(224,90,58,0.07);border-color:rgba(224,90,58,0.22)}
+.card-amb{background:rgba(240,160,48,0.07);border-color:rgba(240,160,48,0.22)}
+.card-dk{background:rgba(4,13,24,0.7);border-color:var(--bb)}
+
+.btn{display:block;width:100%;padding:16px 20px;border-radius:13px;font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;transition:all 0.18s;text-align:center;border:none;letter-spacing:0.02em}
+.btn-p{background:linear-gradient(135deg,var(--teal-d),var(--teal));color:#fff;box-shadow:0 4px 20px rgba(15,184,122,0.22)}
+.btn-p:active{transform:scale(0.97)}
+.btn-p:disabled{opacity:0.3;pointer-events:none;box-shadow:none}
+.btn-s{background:transparent;color:var(--teal-l);border:1px solid rgba(15,184,122,0.22);margin-top:10px}
+.btn-s:active{background:rgba(15,184,122,0.07)}
+
+/* Options - deliberately plain, no A/B/C/D implied hierarchy */
+.opt{display:flex;align-items:flex-start;gap:12px;width:100%;
+  padding:15px 17px;background:rgba(255,255,255,0.025);
+  border:1px solid rgba(255,255,255,0.09);border-radius:14px;
+  font-family:var(--sans);font-size:13px;color:var(--txt2);
+  cursor:pointer;transition:all 0.2s;text-align:left;margin-bottom:10px;line-height:1.65}
+.opt:active{background:rgba(15,184,122,0.1);border-color:rgba(15,184,122,0.4)}
+.opt.chosen{background:rgba(15,184,122,0.13);border-color:var(--teal-l);color:var(--txt);box-shadow:0 0 14px rgba(15,184,122,0.08)}
+.opt.dim{opacity:0.25;pointer-events:none}
+.opt.locked{pointer-events:none}
+.onum{min-width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.07);
+  color:var(--txt3);font-size:11px;font-weight:600;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all 0.25s}
+.opt.chosen .onum{background:var(--teal);color:#fff}
+
+.sbar{margin-bottom:10px}
+.sbar-h{display:flex;justify-content:space-between;margin-bottom:5px}
+.sbar-n{font-size:11px;color:var(--txt2)}.sbar-v{font-size:11px;color:var(--teal-l);font-weight:600}
+.sbar-t{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden}
+.sbar-f{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
+.hi{background:linear-gradient(90deg,var(--teal-d),var(--teal-l))}
+.md{background:linear-gradient(90deg,var(--amber),#fac775)}
+.lo{background:linear-gradient(90deg,var(--red),var(--coral-l))}
+
+.fpill{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.04);
+  border:1px solid var(--bb);border-radius:50px;padding:9px 16px 9px 12px;margin-bottom:14px}
+.fpill-ic{font-size:24px;line-height:1}.fpill-lbl{font-size:10px;color:var(--txt3);letter-spacing:0.07em}
+.fpill-val{font-size:13px;font-weight:500;margin-top:2px;transition:color 0.5s}
+
+.insp{background:rgba(4,13,24,0.95);border:1px solid rgba(15,184,122,0.28);
+  border-radius:13px;padding:16px 18px;margin-bottom:14px;box-shadow:0 0 28px rgba(15,184,122,0.05)}
+.insp-lbl{font-size:10px;color:var(--teal);letter-spacing:0.12em;font-weight:600;
+  margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.insp-lbl::before{content:'▶';font-size:7px}
+.insp-t{font-size:13px;color:var(--txt2);line-height:1.8}
+.insp-q{font-size:12px;color:var(--teal-l);font-style:italic;line-height:1.7;
+  border-left:2px solid var(--teal);padding-left:12px;margin-top:10px}
+
+.scene{background:rgba(255,255,255,0.03);border-left:3px solid var(--teal);
+  border-radius:0 12px 12px 0;padding:14px 16px;margin-bottom:14px;
+  font-size:13px;color:var(--txt2);line-height:1.85}
+.scene b{color:var(--txt);font-weight:500}
+
+.fish-os{background:rgba(15,184,122,0.05);border:1px dashed rgba(15,184,122,0.2);
+  border-radius:12px;padding:12px 16px;margin-bottom:14px;
+  font-size:12px;color:var(--teal-l);line-height:1.7;font-style:italic}
+.fish-os::before{content:'🐟 小魚內心 OS';display:block;font-weight:600;font-style:normal;
+  font-size:10px;letter-spacing:0.08em;color:var(--txt3);margin-bottom:5px}
+
+.step-indicator{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.step-pip{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.1);transition:all 0.3s}
+.step-pip.done{background:var(--teal)}
+.step-pip.cur{background:var(--teal-l);box-shadow:0 0 6px var(--teal)}
+.step-label{font-size:11px;color:var(--txt3);letter-spacing:0.06em}
+
+.wfeed{border-radius:13px;padding:17px 18px;margin-bottom:12px;text-align:center}
+.wf-g{background:rgba(15,184,122,0.12);border:1px solid rgba(15,184,122,0.32)}
+.wf-o{background:rgba(240,160,48,0.1);border:1px solid rgba(240,160,48,0.28)}
+.wf-b{background:rgba(224,90,58,0.1);border:1px solid rgba(224,90,58,0.28)}
+.wf-d{background:rgba(224,58,58,0.1);border:1px solid rgba(224,58,58,0.32)}
+.wf-em{font-size:30px;margin-bottom:7px}.wf-t{font-family:var(--serif);font-size:16px;margin-bottom:6px}
+.wf-d2{font-size:13px;color:var(--txt2);line-height:1.65}
+.wf-sys{font-size:11px;color:var(--txt3);margin-top:8px;font-style:italic}
+
+/* Result */
+.grade-big{font-family:var(--serif);font-size:92px;line-height:1;text-align:center;font-weight:900}
+.grade-name{font-family:var(--serif);font-size:21px;text-align:center;margin-bottom:6px}
+
+.radar-wrap{background:rgba(4,13,24,0.8);border:1px solid rgba(15,184,122,0.18);
+  border-radius:16px;padding:16px;margin-bottom:14px;text-align:center}
+.radar-title{font-size:11px;color:var(--txt3);letter-spacing:0.08em;margin-bottom:12px}
+
+.share-wrap{border-radius:16px;overflow:hidden;border:1px solid rgba(15,184,122,0.28);
+  margin-bottom:12px;box-shadow:0 0 28px rgba(15,184,122,0.08)}
+#share-cvs{display:block;width:100%;height:auto}
+.sbtns{display:flex;gap:10px;margin-bottom:14px}
+.sbtn{flex:1;padding:14px 8px;border-radius:12px;font-family:var(--sans);font-size:13px;
+  font-weight:500;cursor:pointer;transition:all 0.18s;border:none;
+  display:flex;align-items:center;justify-content:center;gap:6px}
+.sbtn-save{background:linear-gradient(135deg,var(--teal-d),var(--teal));color:#fff}
+.sbtn-save:active{transform:scale(0.97)}
+.sbtn-copy{background:rgba(255,255,255,0.06);color:var(--teal-l);border:1px solid var(--bb)}
+.sbtn-copy:active{background:rgba(255,255,255,0.1)}
+
+.chip{display:inline-flex;align-items:center;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;letter-spacing:0.04em}
+.ch-t{background:rgba(15,184,122,0.15);color:var(--teal-l)}
+.ch-a{background:rgba(240,160,48,0.15);color:var(--amber)}
+.ch-c{background:rgba(224,90,58,0.15);color:var(--coral-l)}
+.ch-r{background:rgba(224,58,58,0.15);color:#ff7070}
+
+.nin{width:100%;padding:16px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(15,184,122,0.2);border-radius:13px;
+  font-family:var(--sans);font-size:20px;color:var(--txt);
+  text-align:center;outline:none;letter-spacing:0.06em}
+.nin::placeholder{color:var(--txt3);font-size:15px;letter-spacing:0.03em}
+.nin:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,184,122,0.1)}
+
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.mstat{background:var(--cbg);border:1px solid rgba(15,184,122,0.14);border-radius:12px;padding:12px;text-align:center}
+.mstat-v{font-size:21px;font-weight:700;color:var(--teal-l);font-family:var(--serif)}
+.mstat-l{font-size:10px;color:var(--txt3);margin-top:4px}
+
+.consistency-badge{border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.cb-consistent{background:rgba(15,184,122,0.08);border:1px solid rgba(15,184,122,0.3)}
+.cb-inconsistent{background:rgba(240,160,48,0.08);border:1px solid rgba(240,160,48,0.3)}
+.cb-t{font-size:12px;font-weight:600;margin-bottom:6px}
+.cb-d{font-size:12px;color:var(--txt2);line-height:1.7}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:rgba(15,184,122,0.92);color:#fff;padding:11px 22px;border-radius:50px;
+  font-size:13px;opacity:0;transition:all 0.3s;z-index:9999;white-space:nowrap;
+  backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(15,184,122,0.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.ov{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;
+  background:rgba(4,13,24,0.9);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity 0.3s}
+.ov.on{opacity:1;pointer-events:auto}
+.ov-inner{text-align:center;animation:pop 0.5s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes pop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+.ov-ic{font-size:56px;margin-bottom:12px}.ov-t{font-family:var(--serif);font-size:19px;color:var(--teal-l);margin-bottom:5px}
+.ov-s{font-size:12px;color:var(--txt3)}
+
+.scan-line{font-size:12px;color:var(--teal);letter-spacing:0.05em;line-height:2.3;
+  overflow:hidden;white-space:nowrap;width:0;
+  border-right:2px solid var(--teal);
+  animation:type 0.5s steps(28,end) forwards,blink 0.7s infinite 0.5s}
+@keyframes type{to{width:100%}}
+@keyframes blink{0%,100%{border-color:var(--teal)}50%{border-color:transparent}}
+
+.fi{animation:fadeIn 0.4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tc{text-align:center}.serif{font-family:var(--serif)}
+.f10{font-size:10px}.f11{font-size:11px}.f12{font-size:12px}.f13{font-size:13px}.f14{font-size:14px}
+.ct2{color:var(--txt2)}.ct3{color:var(--txt3)}.ctl{color:var(--teal-l)}.cam{color:var(--amber)}.cco{color:var(--coral-l)}
+.mb6{margin-bottom:6px}.mb10{margin-bottom:10px}.mb14{margin-bottom:14px}.mb20{margin-bottom:20px}.mb24{margin-bottom:24px}
+.mt8{margin-top:8px}.mt14{margin-top:14px}.mt20{margin-top:20px}.mta{margin-top:auto}
+.w5{font-weight:500}.w6{font-weight:600}.w7{font-weight:700}
+hr.d{border:none;border-top:1px solid var(--bb);margin:14px 0}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="app">
+
+<!-- HOME -->
+<div class="scr on" id="s-home">
+<div class="pad" style="display:flex;flex-direction:column;min-height:100vh">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+    <div class="hero"><div class="fish">🐠</div>
+      <div style="margin-top:10px;font-size:10px;color:var(--txt3);letter-spacing:0.1em">— 稀有小魚出沒 —</div>
+    </div>
+    <div class="tc mb20">
+      <div style="font-size:10px;color:var(--teal);letter-spacing:0.15em;margin-bottom:12px">🔬 養魚資格審查系統</div>
+      <h1 class="serif" style="font-size:28px;font-weight:900;line-height:1.25;margin-bottom:10px">小魚養成<br>資格審查</h1>
+      <div style="font-size:12px;color:var(--teal-l);letter-spacing:0.05em">會心動不稀奇，會供氧才厲害。</div>
+    </div>
+    <div class="insp mb14">
+      <div class="insp-lbl">關於這條小魚</div>
+      <div class="insp-t f12">
+        她在意的不是你多會追，<br>而是你能不能讓她不用一直猜。<br><br>
+        她不需要你完美，<br>但需要你<span class="ctl">說到做到</span>、<span class="ctl">有交代</span>、<span class="ctl">有偏愛</span>。
+      </div>
+      <div class="insp-q">「她可以心動，但她不想溺水。」</div>
+    </div>
+    <div class="card card-dk f12 ct3 mb20" style="line-height:1.85">
+      完成 6 關情境，每關 2–3 步選擇。<br>
+      系統在背後記錄你的行為模式，<br>最後判定你的<span style="color:var(--txt)">養魚類型</span>與<span style="color:var(--txt)">養魚等級</span>。
+    </div>
+  </div>
+  <button class="btn btn-p" onclick="G.go('name')">🎮 開始資格審查</button>
+  <div class="tc f11 ct3 mt8 mb20">約 10–12 分鐘｜結果含雷達圖可分享</div>
+</div>
+</div>
+
+<!-- NAME -->
+<div class="scr" id="s-name">
+<div class="topbar">
+  <button class="back" onclick="G.go('home')">←</button>
+  <div class="tb-mid"><div class="tb-t">身份登記</div></div>
+  <div style="width:34px"></div>
+</div>
+<div class="pad" style="display:flex;flex-direction:column;flex:1">
+  <div style="flex:1">
+    <div class="hero" style="padding:16px 0 20px"><div class="fish">🎣</div></div>
+    <div class="tc mb20">
+      <div class="serif" style="font-size:22px;margin-bottom:7px">你叫什麼名字？</div>
+      <div class="f12 ct3">小魚想知道靠近她的人是誰。</div>
+    </div>
+    <input class="nin" id="name-in" placeholder="輸入你的暱稱" maxlength="10">
+    <div class="f11 ct3 tc mt8 mb20">最多 10 字</div>
+    <div class="insp">
+      <div class="insp-lbl">審查須知</div>
+      <div class="insp-t f12">
+        每關有 2–3 個選擇步驟。<br>
+        沒有標準答案，也沒有哪個選項明顯比較好。<br>
+        系統在記錄的是你的<span class="ctl">行為模式</span>，不是你的答案。
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-p" onclick="G.saveName()">確認，開始審查 →</button>
+</div>
+</div>
+
+<!-- MAP -->
+<div class="scr" id="s-map">
+<div class="topbar">
+  <button class="back" onclick="G.go('name')">←</button>
+  <div class="tb-mid"><div class="tb-t">審查地圖</div></div>
+  <div style="width:34px;text-align:right;font-size:16px">🐠</div>
+</div>
+<div class="pad">
+  <div class="card card-dk mb14" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+    <div style="font-size:28px">🔒</div>
+    <div style="flex:1">
+      <div class="f10 ct3 mb6" style="letter-spacing:.08em">水質數據封存中</div>
+      <div class="f13" style="color:var(--txt);font-weight:500">已完成 <span id="m-done" style="color:var(--teal-l)">0/6</span> 關</div>
+      <div class="f11 ct3 mt8" id="map-status-txt">審查尚未開始</div>
+    </div>
+  </div>
+  <div class="insp mb14" style="padding:12px 16px">
+    <div class="insp-lbl">系統提示</div>
+    <div class="insp-t f12">你的水質數值和小魚狀態，<br>將在所有關卡完成後<span class="ctl">一次揭曉</span>。</div>
+  </div>
+  <div id="map-list"></div>
+  <div id="map-final-btn"></div>
+</div>
+</div>
+
+<!-- LEVEL -->
+<div class="scr" id="s-lv">
+<div class="topbar" id="lv-bar">
+  <button class="back" onclick="G.go('map')">←</button>
+  <div class="tb-mid">
+    <div class="tb-t" id="lv-title">Level 1</div>
+    <div class="tb-s" id="lv-sub">—</div>
+  </div>
+  <div style="width:34px"></div>
+</div>
+<div class="dots" id="lv-dots"></div>
+<div id="lv-body" class="pad" style="padding-top:14px"></div>
+</div>
+
+<!-- RESULT -->
+<div class="scr" id="s-res">
+<div class="topbar">
+  <button class="back" onclick="G.go('map')">←</button>
+  <div class="tb-mid"><div class="tb-t" id="res-title">關卡結果</div></div>
+  <div style="width:34px"></div>
+</div>
+<div class="pad fi" id="res-body"></div>
+</div>
+
+<!-- SCAN -->
+<div class="scr" id="s-scan">
+<div class="pad" style="display:flex;flex-direction:column;justify-content:center;min-height:100vh">
+  <div class="tc mb20">
+    <div style="font-size:52px;margin-bottom:12px">🔬</div>
+    <div class="serif" style="font-size:20px;margin-bottom:6px">系統分析中</div>
+    <div class="f12 ct3">正在側寫你的養魚行為模式</div>
+  </div>
+  <div class="insp"><div class="insp-lbl">分析進度</div><div id="scan-lines"></div></div>
+</div>
+</div>
+
+<!-- FINAL -->
+<div class="scr" id="s-final">
+<div class="topbar">
+  <button class="back" onclick="G.go('map')">←</button>
+  <div class="tb-mid"><div class="tb-t">養魚資格報告</div></div>
+  <div style="width:34px"></div>
+</div>
+<div class="pad fi" id="final-body"></div>
+</div>
+
+<!-- SHARE -->
+<div class="scr" id="s-share">
+<div class="topbar">
+  <button class="back" onclick="G.go('final')">←</button>
+  <div class="tb-mid"><div class="tb-t">分享結果</div></div>
+  <div style="width:34px"></div>
+</div>
+<div class="pad fi" id="share-body"></div>
+</div>
+
+</div>
+
+<div class="ov" id="ov">
+  <div class="ov-inner">
+    <div class="ov-ic" id="ov-ic">🔓</div>
+    <div class="ov-t" id="ov-t">解鎖</div>
+    <div class="ov-s" id="ov-s">繼續</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ================================================================
+// DATA
+// ================================================================
+
+const FISH_STATES=[
+  {ic:'🐠',lbl:'小魚靠近中',col:'#4dd9a8',cls:'s0'},
+  {ic:'🐟',lbl:'小魚觀察中',col:'#f0a030',cls:'s1'},
+  {ic:'🫧',lbl:'小魚安靜中',col:'#7eb8d8',cls:'s2'},
+  {ic:'⚠️',lbl:'小魚警戒中',col:'#f09070',cls:'s3'},
+  {ic:'😮‍💨',lbl:'小魚缺氧中',col:'#e03a3a',cls:'s4'},
+  {ic:'🌊',lbl:'小魚準備回大海',col:'#c03030',cls:'s5'}
+];
+
+// stat keys: w=水溫穩定, f=飼料偏愛, p=供養堅持, l=邏輯一致, a=自我覺察
+const STAT_NAMES={w:'🌡️ 水溫穩定度',f:'🐟 飼料偏愛度',p:'💪 供養堅持度',l:'🔗 邏輯一致度',a:'🧠 自我覺察度'};
+
+// ── LEVELS ──────────────────────────────────────────────────────
+// Each level has steps. Each step has opts[] shuffled at runtime.
+// opts: { t=text, ch={stat deltas}, fs=fishState, sig=[typeSignals], trap=bool }
+// trap=true means it LOOKS good but has a hidden cost (bait option)
+// consistency: each level has a cKey so the system can compare across levels
+
+const LEVELS=[
+{id:1, name:'水溫校準', theme:'你消失之後', ic:'🌡️',
+ pre:'第一關。\n系統正在測試你的水溫控制能力。\n\n這條魚對溫度很敏感——不是體溫，是訊號的溫度。你消失的方式，和你回來的方式，她都記著。',
+ steps:[
+  {scene:'你這三天工作很忙，沒有主動找她。今晚有空了，你打開對話框。',
+   os:'你可以忙，但我不想只在你有空的時候被想起。',
+   q:'你傳了什麼？',
+   cKey:'c1s1',
+   opts:[
+    {t:'「這幾天忙翻了，但有一直想到你。明天有空嗎？」',
+     ch:{w:15,f:0,p:0,l:0,a:0},fs:0,sig:['busy','flirt'],trap:false},
+    {t:'「哈你在幹嘛」',
+     ch:{w:-8,f:0,p:0,l:0,a:0},fs:1,sig:['flirt','ghost'],trap:false},
+    {t:'（什麼都沒傳，等她先開口）',
+     ch:{w:-15,f:0,p:-16,l:0,a:0},fs:2,sig:['ghost','free'],trap:false},
+    {t:'「你怎麼都不主動找我」',
+     ch:{w:-20,f:0,p:0,l:-12,a:0},fs:3,sig:['puffer'],trap:false}
+   ]
+  },
+  {sceneByPick:[
+    '她說：「我知道你忙，只是不確定你忙完還記不記得我在。」',
+    '她回了：「還好啊。」（就這樣）',
+    '過了兩天她傳了：「你還在嗎？」',
+    '她說：「我以為你想要空間。」'
+   ],
+   os:'我沒有要怪你，我只是在觀察你接下來怎麼做。',
+   qByPick:[
+    '她這樣說，你怎麼接？',
+    '她只回兩個字。你注意到了嗎？',
+    '她先開口了。你說？',
+    '她在替你找理由了。你說？'
+   ],
+   cKey:'c1s2',
+   opts:[
+    {t:'「記得，所以我現在來找你了。之後忙的話我會說一聲。」',
+     ch:{w:20,f:0,p:0,l:14,a:0},fs:0,sig:['deep'],trap:false},
+    {t:'「哎你多想了，我就是忙。」',
+     ch:{w:-15,f:0,p:0,l:-10,a:0},fs:2,sig:['puffer','free'],trap:false},
+    {t:'「我一直都有在的，你放心。」',
+     ch:{w:5,f:0,p:0,l:-6,a:0},fs:1,sig:['flirt'],trap:true},
+    {t:'「不好意思，我那陣子真的沒狀態聯絡人。」',
+     ch:{w:-5,f:0,p:0,l:0,a:0},fs:1,sig:['free'],trap:false}
+   ]
+  }
+ ],
+ feedback:{
+   '00':{wc:'wf-g',em:'💧',t:'水溫穩定',d:'你消失了，你回來的時候也給了交代。她記住的不是你消失，是你回來的方式。',sys:'能在消失後好好回來的人，比從來不消失的人更難得。'},
+   '01':{wc:'wf-o',em:'💧',t:'水溫稍暖',d:'你承認了消失，但你給她的安全感還可以更具體一點。',sys:'她聽到了你的方向，但她還在等你的行動。'},
+   '02':{wc:'wf-o',em:'🌡️',t:'水溫一般',d:'你給了解釋，她接受了。但「沒狀態」這個理由讓她不確定下次還會不會這樣。',sys:'解釋是好的，但解釋不等於保證。'},
+   '10':{wc:'wf-o',em:'🌊',t:'水溫不穩',d:'她只回了兩個字，你繼續好好說，這是對的。只是起點稍微冷了一點。',sys:'開頭的方式會影響後面的溫度。'},
+   '20':{wc:'wf-o',em:'🌊',t:'水溫待觀察',d:'你等她先說了，她也說了。後來你表現不錯，但她記著是她先開口的。',sys:'讓她先找你，有時候是默契，有時候是訊號不明。'},
+   '30':{wc:'wf-o',em:'🌡️',t:'水溫回升中',d:'你開頭讓她覺得是自己的問題，但你後來說清楚了。她在重新評估。',sys:'補救比什麼都不做好。但她記住的可能是起點。'},
+   '_':{wc:'wf-b',em:'⚠️',t:'水溫記錄中',d:'你的水溫數據已記錄。',sys:'繼續前進。'}
+ }
+},
+
+{id:2, name:'飼料偵測', theme:'你有沒有記得她說過的事', ic:'🐟',
+ pre:'第二關。\n這條魚不吃大眾飼料。\n\n她說過的事，你記了多少，她都知道。\n不是考試，是在看你有沒有把她放在心上。',
+ steps:[
+  {scene:'兩週前，她隨口說她最近在考慮一個決定，還沒想清楚。今天你們在聊天。',
+   os:'我說的那些，你有放在心上嗎？',
+   q:'你怎麼做？',
+   cKey:'c2s1',
+   opts:[
+    {t:'主動問起：「你之前說在考慮的那件事，後來呢？」',
+     ch:{w:0,f:16,p:0,l:0,a:0},fs:0,sig:['deep'],trap:false},
+    {t:'等她自己說，不主動問。',
+     ch:{w:0,f:-8,p:0,l:0,a:0},fs:1,sig:['ghost','free'],trap:false},
+    {t:'聊著聊著，在她說別的事時順帶問了一下。',
+     ch:{w:0,f:5,p:0,l:0,a:0},fs:1,sig:['flirt','ghost'],trap:false},
+    {t:'忘了這件事，沒有特別提。',
+     ch:{w:0,f:-13,p:0,l:0,a:0},fs:2,sig:['busy','ghost'],trap:false}
+   ]
+  },
+  {sceneByPick:[
+    '她有點驚訝你記得，說：「你還記得這個？」',
+    '她說了些其他的事，但沒有提那件事。',
+    '她說：「啊，那個。還在想。」',
+    '她繼續聊別的，話題自然往前走。'
+   ],
+   os:'被記得這件事，對我來說比你說了什麼更重要。',
+   qByPick:[
+    '你怎麼說？',
+    '這個時候你怎麼做？',
+    '你說？',
+    '你這個時候？'
+   ],
+   cKey:'c2s2',
+   opts:[
+    {t:'「你說過的事我會記，這不是隨口說說。」',
+     ch:{w:0,f:14,p:0,l:0,a:4},fs:0,sig:['deep'],trap:false},
+    {t:'「對啊，怎麼了。」（低調帶過）',
+     ch:{w:0,f:2,p:0,l:0,a:0},fs:1,sig:['busy','flirt'],trap:false},
+    {t:'「嗯，就剛好想到。」',
+     ch:{w:0,f:-5,p:0,l:0,a:0},fs:1,sig:['free'],trap:true},
+    {t:'繼續問她後來怎麼樣了。',
+     ch:{w:0,f:12,p:0,l:0,a:2},fs:0,sig:['puffer'],trap:false}
+   ]
+  }
+ ],
+ feedback:{
+   '00':{wc:'wf-g',em:'🐟',t:'飼料命中',d:'你記得了，你讓她知道你記得了，而且你讓她知道這不是偶然。這是她的愛語。',sys:'記住她說過的話，比任何行動都難假裝。'},
+   '0t':{wc:'wf-o',em:'🌊',t:'飼料有效但保留',d:'你記得了，但你說「就剛好想到」——你在縮小這件事的份量。她感覺得出來。',sys:'你有記，只是不太敢讓她知道你是認真的。'},
+   '03':{wc:'wf-g',em:'🐟',t:'飼料命中',d:'你不只記得，你還繼續問她。這告訴她你不是只是記住，你真的在意後續。',sys:'記得加上追蹤，是最有效的飼料組合。'},
+   '10':{wc:'wf-o',em:'🫧',t:'飼料普通',d:'你沒有主動問，但當話題出現，你接住了。她可能以為你只是剛好記得。',sys:'主動提和被動接到，她感覺到的訊號不一樣。'},
+   '20':{wc:'wf-o',em:'🫧',t:'飼料一般',d:'你順帶問了，也說清楚了。不算驚喜，但讓她覺得你有在聽。',sys:'這個程度讓她覺得你還不錯，但還不到讓她記住的程度。'},
+   '30':{wc:'wf-b',em:'🌫️',t:'飼料不足',d:'你沒記得，話題就這樣過去了。她沒說什麼，但她注意到了。',sys:'她說的小事，是她在觀察你會不會記得的線索。'},
+   '_':{wc:'wf-o',em:'🐟',t:'飼料記錄中',d:'數據已記錄。',sys:'繼續。'}
+ }
+},
+
+{id:3, name:'堅持度壓測', theme:'她安靜了，你怎麼辦', ic:'💪',
+ pre:'第三關。\n壓力測試開始。\n\n她壓力大的時候會安靜。不是冷你，是在自己消化。這一關看你等不等得住，以及等的方式對不對。',
+ steps:[
+  {scene:'最近她回訊息變慢了，語氣也比較短。你不確定是因為你，還是她自己的狀態。',
+   os:'我沒有生氣，我只是在觀察你有沒有注意到我。',
+   q:'你怎麼做？',
+   cKey:'c3s1',
+   opts:[
+    {t:'主動說：「你最近好像有點累，不用撐著回我，有需要我在的時候我在。」',
+     ch:{w:0,f:0,p:35,l:0,a:4},fs:0,sig:['deep'],trap:false},
+    {t:'傳訊問她：「你最近還好嗎？」',
+     ch:{w:0,f:0,p:13,l:0,a:0},fs:1,sig:['busy','flirt'],trap:false},
+    {t:'傳了幾個梗圖，想讓她心情好一點。',
+     ch:{w:0,f:0,p:-8,l:0,a:0},fs:1,sig:['flirt','ghost'],trap:false},
+    {t:'你也跟著安靜，看誰先開口。',
+     ch:{w:0,f:0,p:-32,l:0,a:0},fs:3,sig:['ghost','free'],trap:false}
+   ]
+  },
+  {sceneByPick:[
+    '她說：「沒事，最近工作有點多。」',
+    '她回：「還好啊，你呢？」',
+    '她回了幾個哈哈，但感覺還是在神遊。',
+    '過了一段時間，她才回了一句「還好」。'
+   ],
+   os:'「沒事」不一定是真的沒事，我只是不知道你有沒有聽出來。',
+   qByPick:[
+    '她說沒事。你說？',
+    '她把問題丟回來。你說？',
+    '她在笑，但好像心不在焉。你？',
+    '她最後說了「還好」。你？'
+   ],
+   cKey:'c3s2',
+   opts:[
+    {t:'「那先忙，不用管我。等你喘過來再聊。」',
+     ch:{w:0,f:0,p:32,l:0,a:4},fs:0,sig:['deep'],trap:false},
+    {t:'「那你最近都沒空囉。」',
+     ch:{w:0,f:0,p:-16,l:0,a:0},fs:2,sig:['puffer','free'],trap:false},
+    {t:'「是因為我嗎？」',
+     ch:{w:0,f:0,p:-13,l:0,a:-2},fs:2,sig:['puffer','free'],trap:false},
+    {t:'「你需要什麼就說，我不確定我能做什麼，但我在。」',
+     ch:{w:0,f:0,p:16,l:0,a:2},fs:1,sig:['free'],trap:false}
+   ]
+  }
+ ],
+ feedback:{
+   '00':{wc:'wf-g',em:'💪',t:'堅持有感',d:'你看見她了，她說沒事你也沒有就此收手。你給了她空間，也讓她知道你還在。',sys:'這是很難同時做到的兩件事。'},
+   '01':{wc:'wf-o',em:'🌊',t:'堅持有點歪',d:'你主動問了，但接球的時候把焦點拉回自己。她要再分一點心照顧你的感受。',sys:'起點對了，方向稍微偏了一點。'},
+   '02':{wc:'wf-o',em:'🌊',t:'堅持普通',d:'你問了，但這個問題讓她需要安撫你。她原本有點累，現在多了一件事要處理。',sys:'你在意她，但問的方式讓她變成被需要的那個。'},
+   '03':{wc:'wf-o',em:'🌊',t:'堅持尚可',d:'你說了你在，但也說了你不確定能做什麼。她感覺到你有在，但也感覺到你有點保留。',sys:'說「我在」和說「我不確定我能做什麼」，她聽到的是矛盾的兩句話。'},
+   '10':{wc:'wf-o',em:'🫧',t:'堅持不足',d:'你問了，她回問你，你繼續聊。但她說「沒事」的時候，她是在測試你有沒有聽出來。',sys:'她等你問，你等她說。這個局有時候沒有人會先動。'},
+   '30':{wc:'wf-b',em:'🌫️',t:'堅持缺氧',d:'你也安靜了，然後你也沒有問。最後她回了一個「還好」，你說了「嗯」。沒有人真的被看見。',sys:'兩個人都在等，有時候是默契，有時候是缺氧。這次比較像後者。'},
+   '_':{wc:'wf-o',em:'💪',t:'堅持記錄中',d:'數據已記錄。',sys:'進入後半段。壓力升溫。'}
+ }
+},
+
+{id:4, name:'高壓水溫測試', theme:'她說話更直接了', ic:'🌡️',
+ pre:'第四關。\n水溫進階測試。\n\n前三關壓力比較低，現在她說話更直接了。\n這一關對應第一關——同樣的人，在壓力更大的時候，還是同一個你嗎？',
+ steps:[
+  {scene:'她說：「我有時候會不確定，你消失的時候是真的忙，還是只是不想講話。」',
+   os:'我不是在責怪你，我只是把我真實的感受說出來。',
+   q:'你說？',
+   cKey:'c4s1',
+   opts:[
+    {t:'「你說的這個我有想過。確實有幾次我是不想講話，不是真的忙。」',
+     ch:{w:18,f:0,p:0,l:24,a:7},fs:0,sig:['deep'],trap:false},
+    {t:'「我真的是忙，你為什麼會這樣想。」',
+     ch:{w:-18,f:0,p:0,l:-18,a:-4},fs:3,sig:['puffer','free'],trap:false},
+    {t:'「你放心，我不想講話也不會消失，我都會說的。」',
+     ch:{w:8,f:0,p:0,l:-10,a:0},fs:1,sig:['flirt'],trap:true},
+    {t:'「這個我聽到了，我需要一點時間想想怎麼回你。」',
+     ch:{w:0,f:0,p:0,l:0,a:4},fs:1,sig:['free','ghost'],trap:false}
+   ]
+  },
+  {sceneByPick:[
+    '她說：「謝謝你說實話。」',
+    '她說：「我不是要懷疑你，只是說出來。」',
+    '她說：「好，我相信你。」（語氣有點保留）',
+    '她說：「好，那我等你。」'
+   ],
+   os:'你接下來說什麼，比你剛才說什麼更重要。',
+   qByPick:[
+    '她說謝謝。你說？',
+    '她說她只是說出來。你怎麼接？',
+    '她說相信你，但語氣有保留。你說？',
+    '她說她等你。你說？'
+   ],
+   cKey:'c4s2',
+   opts:[
+    {t:'「不用謝，你說出來是對的，我要感謝你說。」',
+     ch:{w:15,f:0,p:0,l:14,a:4},fs:0,sig:['deep'],trap:false},
+    {t:'「我知道，我也只是說我的狀態。」',
+     ch:{w:3,f:0,p:0,l:4,a:0},fs:1,sig:['busy','flirt'],trap:false},
+    {t:'「我以後會更注意的。」',
+     ch:{w:8,f:0,p:0,l:4,a:0},fs:1,sig:['busy','flirt'],trap:false},
+    {t:'沉默了一下，換了個話題。',
+     ch:{w:-15,f:0,p:0,l:-14,a:0},fs:3,sig:['ghost','free'],trap:false}
+   ]
+  },
+  {scene:'她說：「我不是要你完美，我只是需要知道你說的是真的。」',
+   os:'這句話我說得很直，但這已經是我能說得最保留的版本了。',
+   q:'你說？',
+   cKey:'c4s3',
+   opts:[
+    {t:'「我給你的交代，有時候不夠真實。我知道了。」',
+     ch:{w:18,f:0,p:0,l:22,a:7},fs:0,sig:['deep'],trap:false},
+    {t:'「我一直都說真的，你不相信我嗎。」',
+     ch:{w:-18,f:0,p:0,l:-18,a:-4},fs:3,sig:['puffer','free'],trap:false},
+    {t:'「那你需要我做什麼你才信。」',
+     ch:{w:-12,f:0,p:0,l:-12,a:0},fs:3,sig:['free','puffer'],trap:false},
+    {t:'「我懂。」（就這樣）',
+     ch:{w:3,f:0,p:0,l:0,a:0},fs:1,sig:['ghost','free'],trap:false}
+   ]
+  }
+ ],
+ feedback:{
+   '000':{wc:'wf-g',em:'🌡️',t:'水溫穩定',d:'你在壓力最大的時候承認了，也說清楚了，也讓她知道你聽到了。這三件事同時發生，很難得。',sys:'高壓下的坦誠，比低壓下的甜言蜜語更有說服力。'},
+   '001':{wc:'wf-o',em:'🌊',t:'水溫尚可',d:'你在最後說了「我懂」。她不確定你懂到什麼程度，但至少你沒有防衛。',sys:'「我懂」是最短的答案，也是最難猜的答案。'},
+   '100':{wc:'wf-b',em:'⚠️',t:'水溫驟降',d:'你防衛了，然後你後來說清楚了。她記住的可能是哪一個，還不確定。',sys:'高壓下的第一反應，通常比後來說的話更真實。'},
+   't00':{wc:'wf-o',em:'🌊',t:'水溫普通',d:'你給了承諾，但你迴避了她說的那件事本身。她注意到了你沒有正面回應，但她沒有說。',sys:'有時候「我以後會注意」是真的在承諾，有時候是在換話題。她在看你是哪一種。'},
+   '_':{wc:'wf-b',em:'⚠️',t:'水溫記錄中',d:'高壓段數據已記錄。',sys:'繼續。'}
+ }
+},
+
+{id:5, name:'偏愛真實性測試', theme:'你讓她覺得她是特別的嗎', ic:'🌟',
+ pre:'第五關。\n飼料進階。\n\n她很聰明，她知道你是不是在群發關心。\n這一關不是測你說什麼，是測你說的是不是真的。',
+ steps:[
+  {scene:'你們聊了很久，氣氛很好。她突然問：「你這樣跟別人聊也是一樣嗎？」',
+   os:'我不是要你發誓，我只是想知道我在你那裡有沒有一個別人沒有的位置。',
+   q:'你說？',
+   cKey:'c5s1',
+   opts:[
+    {t:'「不太一樣。跟你聊我比較想把話說完整。」',
+     ch:{w:0,f:10,p:0,l:0,a:0},fs:0,sig:['flirt','ghost'],trap:false},
+    {t:'「你是最特別的。」',
+     ch:{w:0,f:-6,p:0,l:-10,a:0},fs:1,sig:['flirt'],trap:true},
+    {t:'「哈你問這幹嘛。」',
+     ch:{w:0,f:-10,p:0,l:0,a:0},fs:2,sig:['free','ghost'],trap:false},
+    {t:'「說實話我說不清楚，但我確實比較想找你說。」',
+     ch:{w:0,f:12,p:0,l:0,a:4},fs:0,sig:['deep'],trap:false}
+   ]
+  },
+  {sceneByPick:[
+    '她說：「我只是想確認一下。」',
+    '她說：「我不需要你這樣說。」（語氣有點保留）',
+    '她說：「好啦，你不用這樣哄我。」',
+    '她說：「說不清楚也沒關係，我聽到了。」'
+   ],
+   os:'她在看你怎麼接這個球。',
+   qByPick:[
+    '她說只是想確認。你說？',
+    '她說不需要。你說？',
+    '她覺得你在哄她。你說？',
+    '她接住了你說的不確定。你說？'
+   ],
+   cKey:'c5s2',
+   opts:[
+    {t:'「確認沒問題，你本來就值得被確認。」',
+     ch:{w:0,f:12,p:0,l:0,a:0},fs:0,sig:['flirt','ghost'],trap:false},
+    {t:'「放心啦。」',
+     ch:{w:0,f:0,p:0,l:0,a:0},fs:1,sig:['busy','flirt'],trap:false},
+    {t:'繼續把剛才說的說得更具體一點。',
+     ch:{w:0,f:13,p:0,l:0,a:4},fs:0,sig:['deep'],trap:false},
+    {t:'「我也不知道要怎麼說才能讓你信。」',
+     ch:{w:0,f:-5,p:0,l:-6,a:0},fs:2,sig:['puffer','free'],trap:false}
+   ]
+  },
+  {scene:'她說：「我有時候不確定，你靠近我是因為真的想靠近，還是因為你喜歡我游向你的感覺。」',
+   os:'這個問題我問了很久才問出口。',
+   q:'你說？',
+   cKey:'c5s3',
+   opts:[
+    {t:'「我想過這個問題。我沒辦法假裝我百分之百確定，但我想靠近你這件事是真的。」',
+     ch:{w:0,f:13,p:0,l:0,a:9},fs:0,sig:['deep'],trap:false},
+    {t:'「當然是真的想靠近你，你幹嘛這樣想。」',
+     ch:{w:0,f:-6,p:0,l:0,a:-4},fs:2,sig:['flirt','ghost'],trap:false},
+    {t:'「你為什麼會這樣覺得？」',
+     ch:{w:0,f:-5,p:0,l:0,a:0},fs:2,sig:['free','ghost'],trap:false},
+    {t:'「我也在想這個問題。」',
+     ch:{w:0,f:3,p:0,l:0,a:4},fs:1,sig:['ghost','free'],trap:false}
+   ]
+  }
+ ],
+ feedback:{
+   '000':{wc:'wf-g',em:'🌟',t:'偏愛感真實',d:'你沒有給她一個完美的答案，你給的是真實的。她問的不是你有多肯定，是你有沒有認真想過。',sys:'誠實的不確定，比假裝確定更有說服力。'},
+   '00t':{wc:'wf-o',em:'🌊',t:'偏愛感存在但有保留',d:'你前面說得不錯，最後說了「我也在想這個問題」。她接住了，但她不知道你的答案是什麼。',sys:'誠實是好的，但有時候她需要一個方向，不只是一起坐在問號裡。'},
+   't00':{wc:'wf-o',em:'🌊',t:'偏愛感有限',d:'你說「你是最特別的」——她聽得出來這句話太光滑了。後來你說清楚了一點，她在重新評估。',sys:'制式的特別，有時候比不說更讓她懷疑。'},
+   '_':{wc:'wf-o',em:'🌟',t:'偏愛記錄中',d:'數據已記錄。',sys:'最後一關。'}
+ }
+},
+
+{id:6, name:'覺察測試', theme:'你知道自己在做什麼嗎', ic:'🧠',
+ pre:'第六關。\n最後一關。沒有情境，只有直球。\n\n這條魚不需要你完美，但她需要你知道自己在哪裡。\n接下來三個問題，不要想太久。',
+ steps:[
+  {scene:'這段時間，她有沒有替你做一些本來不應該她做的事？\n（例如替你的消失找理由、替你的沉默找意義、替你的矛盾找解釋）',
+   os:'這個問題她問了很久才決定問。',
+   q:'你的回答？',
+   cKey:'c6s1',
+   opts:[
+    {t:'「有，我說得出來是哪幾次。」',
+     ch:{w:0,f:0,p:0,l:0,a:13},fs:0,sig:['deep'],trap:false},
+    {t:'「可能有，但我不確定哪一次。」',
+     ch:{w:0,f:0,p:0,l:0,a:5},fs:1,sig:['busy','flirt'],trap:false},
+    {t:'「我沒有刻意讓她這樣，但我知道她可能這樣做了。」',
+     ch:{w:0,f:0,p:0,l:0,a:1},fs:1,sig:['free'],trap:true},
+    {t:'「她如果這樣，應該直接說。」',
+     ch:{w:0,f:0,p:0,l:-10,a:-9},fs:3,sig:['puffer','free'],trap:false}
+   ]
+  },
+  {scene:'你在遊戲裡的選擇，跟你平常的方式一樣嗎？',
+   os:'這個問題沒有好壞，只有真不真實。',
+   q:'你說？',
+   cKey:'c6s2',
+   opts:[
+    {t:'「我在遊戲裡比平常更願意說清楚。」',
+     ch:{w:0,f:0,p:0,l:-10,a:8},fs:1,sig:['busy','flirt'],trap:false},
+    {t:'「差不多，我選的是我真的會做的。」',
+     ch:{w:0,f:0,p:0,l:12,a:4},fs:0,sig:['deep'],trap:false},
+    {t:'「我不確定，可能有幾個選不太一樣。」',
+     ch:{w:0,f:0,p:0,l:0,a:2},fs:1,sig:['flirt','ghost'],trap:false},
+    {t:'「我不確定。」',
+     ch:{w:0,f:0,p:0,l:0,a:2},fs:1,sig:['ghost','free'],trap:false}
+   ]
+  },
+  {scene:'如果她現在問你：「我們算什麼？」',
+   os:'這是她最難問出口的問題。',
+   q:'你會怎麼回？',
+   cKey:'c6s3',
+   opts:[
+    {t:'給一個有立場的回答——不完美，但你說清楚你現在的態度。',
+     ch:{w:0,f:0,p:0,l:18,a:8},fs:0,sig:['deep'],trap:false},
+    {t:'「這個問題我需要想一下，但我不想敷衍你，所以我說我需要時間。」',
+     ch:{w:0,f:0,p:0,l:6,a:4},fs:1,sig:['busy','free'],trap:false},
+    {t:'「順其自然吧。」',
+     ch:{w:0,f:0,p:0,l:-14,a:-5},fs:3,sig:['free','ghost'],trap:false},
+    {t:'「你覺得呢？」',
+     ch:{w:0,f:0,p:0,l:-18,a:-5},fs:4,sig:['ghost','free'],trap:false}
+   ]
+  }
+ ],
+ feedback:{
+   '000':{wc:'wf-g',em:'🧠',t:'覺察滿分',d:'你知道她替你做了什麼，你誠實說了你在遊戲裡可能比平常更清醒，你也給了她一個有立場的答案。這三件事很少同時發生。',sys:'自我覺察是最難假裝的能力。'},
+   '010':{wc:'wf-g',em:'🧠',t:'覺察良好',d:'你的選擇跟平常差不多，你也有立場。這說明你不是在遊戲裡表演，你是在展示真實的你。',sys:'真實比表現更有說服力。'},
+   '001':{wc:'wf-o',em:'🌊',t:'覺察有限',d:'你前兩個問題答得不錯，但最後你說了順其自然。她聽到的是「我現在不想負責這個問題」。',sys:'前面的誠實很好，但最後一題的重量是前兩題的兩倍。'},
+   't':{wc:'wf-o',em:'🌊',t:'覺察普通',d:'你說了「我沒有刻意」——這是在保護自己，不是在承認。沒有刻意不等於沒有影響。',sys:'「我沒有刻意」和「我知道了」，她聽到的是完全不同的兩件事。'},
+   '_':{wc:'wf-b',em:'⚠️',t:'覺察記錄中',d:'最終數據已記錄。',sys:'計算中。'}
+ }
+}
+];
+// ── TYPES ─────────────────────────────────────────────────────
+const TYPES={
+  deep:{n:'深海續航型',em:'🌊',
+    desc:'你有深度，也願意落實。你讓她覺得可以被理解，不只是被欣賞。壓力大的時候你沒有消失，這是她很難遇到的事。',
+    attr:'你的深度加上行動力，是她最難拒絕的組合。',
+    risk:'有時候你太能說了，她會開始觀察你說的跟做的是不是同一件事。',
+    share:'我不保證完美，但我讓你在我這裡不用猜。'},
+  busy:{n:'忙碌斷氧型',em:'📱',
+    desc:'你不是不喜歡她，只是忙起來會讓她缺氧。你有能力、有方向，只是訊號不穩定。',
+    attr:'你有格局，這讓她覺得跟你在一起不無聊。',
+    risk:'你忙的時候她在猜，你回來的時候她在猶豫。這個循環讓她很消耗。',
+    share:'我知道我忙起來會讓你缺氧。我在想辦法換氣。'},
+  flirt:{n:'火花觀賞型',em:'✨',
+    desc:'你很擅長製造心動，但心動之後她需要呼吸。你的魚缸燈光效果一流，氧氣系統還在安裝中。',
+    attr:'你讓她心跳加速的能力無可否認。',
+    risk:'你有空的時候溫度很高，你消失的時候她感覺不到你。',
+    share:'讓你心動我還行，讓你安心是我下一個要學的課。'},
+  free:{n:'自由跳缸型',em:'🪁',
+    desc:'你很有魅力，但自由不是不用交代。你喜歡靠近，但不喜歡被定義，這讓她不確定門是不是真的開著。',
+    attr:'你的生命力讓她忍不住靠近。',
+    risk:'你把「不交代」包裝成「自由」，讓她以為是她要求太多。',
+    share:'我喜歡自由，但我也知道你需要知道自己有沒有被放在心上。'},
+  puffer:{n:'河豚防衛型',em:'🦔',
+    desc:'你不是沒感覺，只是防衛太多。你在意她，但在意的時候反而嘴硬或退開，讓她花力氣在理解你的刺。',
+    attr:'你有真實感，她感覺得到你沒有在假裝。',
+    risk:'你的刺不保護你，只是把她隔開。',
+    share:'我的刺多了一點，但我知道了。'},
+  ghost:{n:'漂浮裝死型',em:'👻',
+    desc:'你不主動、不說清楚、不拒絕也不前進。門開著，但她不知道是歡迎還是忘記關。',
+    attr:'你看起來無害，不帶壓力，有人喜歡這種感覺。',
+    risk:'最讓她缺氧的不是你不來，是你不走。',
+    share:'我知道我讓你一直猜。說實話，我也在猜自己想要什麼。'}
+};
+
+// ── GRADES ────────────────────────────────────────────────────
+const GRADES={
+  S:{g:'S',col:'#0fb87a',sh:'rgba(15,184,122,0.5)',
+    n:'稀有合格養魚者',
+    open:'恭喜你，你通過了。\n不是每個人都能養活這條魚。',
+    fish_say:'你的水質我驗過了。清澈、穩定、氧氣充足。\n我願意住進來。\n不要讓我後悔。'},
+  A:{g:'A',col:'#4dd9a8',sh:'rgba(77,217,168,0.4)',
+    n:'可續養觀察者',
+    open:'還不錯。魚缸有點瑕疵，但住得下去。\n繼續。',
+    fish_say:'你的水質不錯，偶爾會有點混濁。\n但你知道怎麼換水。\n可以繼續觀察。'},
+  B:{g:'B',col:'#f0a030',sh:'rgba(240,160,48,0.4)',
+    n:'短暫心動型',
+    open:'你讓她心動了。\n但心動不等於安心，這是兩件事。',
+    fish_say:'你的魚缸燈光效果一流。\n但我需要的不只是燈，還有氧氣。\n你的氧氣系統還在安裝中嗎？'},
+  C:{g:'C',col:'#e05a3a',sh:'rgba(224,90,58,0.4)',
+    n:'水質不穩型',
+    open:'她在你的魚缸裡可能需要自備氧氣瓶。\n你值得知道這件事。',
+    fish_say:'你的魚缸設備看起來不錯。\n就是常常忘記開氧氣機。\n我帶了備用，但不是每次都會帶。'},
+  D:{g:'D',col:'#e03a3a',sh:'rgba(224,58,58,0.4)',
+    n:'建議放生型',
+    open:'先把魚缸整修好，再說養魚。\n這不是批評，是保護她。',
+    fish_say:'你的魚缸門開著，\n但我不知道是歡迎我還是忘記關。\n我在門口等了一下，\n決定先回大海想想。'}
+};
+
+// ================================================================
+// STATE
+// ================================================================
+const ST={
+  name:'神秘玩家',
+  s:{w:50,f:50,p:50,l:50,a:50},
+  fish:1,
+  done:[],       // completed level ids
+  picks:{},      // {cKey: optionIndex}
+  typeSig:{deep:0,busy:0,flirt:0,free:0,puffer:0,ghost:0},
+  trapCount:0,   // how many trap options chosen
+  curLv:null,
+  curStep:0,
+  stepPicks:[]   // picks within current level [s1idx, s2idx, ...]
+};
+
+let _shareCvs=null,_shareTxt='';
+
+// ================================================================
+// HELPERS
+// ================================================================
+const clamp=v=>Math.max(0,Math.min(100,Math.round(v)));
+const avgStat=()=>{const v=Object.values(ST.s);return Math.round(v.reduce((a,b)=>a+b,0)/v.length)};
+const minStat=()=>Math.min(...Object.values(ST.s));
+const fst=()=>FISH_STATES[ST.fish]||FISH_STATES[1];
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b};
+
+function statBars(){
+  return Object.entries(STAT_NAMES).map(([k,n])=>{
+    const v=clamp(ST.s[k]);
+    const cl=v<40?'lo':v<65?'md':'hi';
+    return`<div class="sbar"><div class="sbar-h"><span class="sbar-n">${n}</span><span class="sbar-v">${v}</span></div><div class="sbar-t"><div class="sbar-f ${cl}" style="width:${v}%"></div></div></div>`;
+  }).join('');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// consistency check: compare two cKeys
+function consistencyScore(){
+  // Compare behaviour direction on paired levels
+  // L1 (low pressure disappear) vs L4 (high pressure disappear)
+  // L3 (she goes quiet) vs L5 (direct question about feelings)
+  // Consistent = same water-temp direction both times
+  const pairs=[
+    {a:'c1s1', b:'c4s1', stat:'w'},  // disappear → water temp
+    {a:'c3s1', b:'c5s1', stat:'p'},  // persistence under pressure
+    {a:'c2s1', b:'c6s1', stat:'f'},  // remembering her vs self-awareness
+  ];
+  let consistent=0, inconsistent=0;
+  pairs.forEach(({a,b,stat})=>{
+    const pa=ST.picks[a], pb=ST.picks[b];
+    if(pa===undefined||pb===undefined) return;
+    const lvA=LEVELS.find(lv=>lv.steps.some(s=>s.cKey===a));
+    const lvB=LEVELS.find(lv=>lv.steps.some(s=>s.cKey===b));
+    const stepA=lvA?.steps.find(s=>s.cKey===a);
+    const stepB=lvB?.steps.find(s=>s.cKey===b);
+    if(!stepA||!stepB) return;
+    const chA=stepA.opts[pa]?.ch[stat]||0;
+    const chB=stepB.opts[pb]?.ch[stat]||0;
+    // Same direction = consistent
+    const sameDir=(chA>=0&&chB>=0)||(chA<0&&chB<0);
+    if(sameDir) consistent++;
+    else inconsistent++;
+  });
+  const total=consistent+inconsistent;
+  return total>0?Math.round((consistent/total)*100):50;
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+const SCREENS={home:'s-home',name:'s-name',map:'s-map',lv:'s-lv',res:'s-res',scan:'s-scan',final:'s-final',share:'s-share'};
+const G={
+  go(id){
+    document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+    const el=document.getElementById(SCREENS[id]||id);
+    if(el){el.classList.add('on');el.scrollTop=0}
+    if(id==='map')G.renderMap();
+  },
+
+  saveName(){
+    ST.name=document.getElementById('name-in').value.trim()||'神秘玩家';
+    G.go('map');
+  },
+
+  // ── MAP ────────────────────────────────────────────────────
+  renderMap(){
+    document.getElementById('m-done').textContent=`${ST.done.length}/6`;
+    const labels=['審查尚未開始','第一關完成','兩關完成，繼續','過半了，撐住','剩下兩關','最後一關了','所有數據收集完畢'];
+    document.getElementById('map-status-txt').textContent=labels[ST.done.length]||'';
+
+    document.getElementById('map-list').innerHTML=LEVELS.map((lv,i)=>{
+      const done=ST.done.includes(lv.id);
+      const locked=i>0&&!ST.done.includes(LEVELS[i-1].id);
+      return`<div onclick="${!locked?`G.startLv(${lv.id})`:''}"`+
+        ` style="display:flex;align-items:center;gap:12px;padding:14px 16px;`+
+        `background:${done?'rgba(15,184,122,0.07)':'var(--cbg)'};`+
+        `border:1px solid ${done?'rgba(15,184,122,0.38)':'rgba(15,184,122,0.16)'};`+
+        `border-radius:13px;margin-bottom:10px;`+
+        `cursor:${locked?'not-allowed':'pointer'};opacity:${locked?0.32:1};`+
+        `transition:all 0.2s">`+
+        `<div style="width:34px;height:34px;border-radius:50%;`+
+        `background:${done?'rgba(15,184,122,0.22)':'rgba(255,255,255,0.05)'};`+
+        `display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">`+
+        `${locked?'🔒':lv.ic}</div>`+
+        `<div style="flex:1">`+
+        `<div style="font-size:14px;font-weight:500;margin-bottom:2px">Level ${lv.id}｜${lv.name}</div>`+
+        `<div class="f11 ct3">${lv.theme}</div></div>`+
+        `${done?'<span style="font-size:15px">✅</span>':''}</div>`;
+    }).join('');
+
+    const fw=document.getElementById('map-final-btn');
+    fw.innerHTML=ST.done.length===6
+      ?`<button class="btn btn-p" style="margin-top:6px" onclick="G.startScan()">🔬 查看養魚資格報告 →</button>`
+      :'';
+  },
+
+  // ── LEVEL ──────────────────────────────────────────────────
+  startLv(id){
+    const lv=LEVELS.find(l=>l.id===id);
+    ST.curLv=lv; ST.curStep=0; ST.stepPicks=[];
+    document.getElementById('lv-title').textContent=`Level ${lv.id}｜${lv.name}`;
+    document.getElementById('lv-sub').textContent=lv.theme;
+    G.renderLvDots();
+    G.renderStep();
+    G.go('lv');
+  },
+
+  renderLvDots(){
+    document.getElementById('lv-dots').innerHTML=LEVELS.map(lv=>{
+      const done=ST.done.includes(lv.id);
+      const cur=lv.id===ST.curLv?.id;
+      return`<div class="dot ${done?'done':cur?'cur':'off'}"></div>`;
+    }).join('');
+  },
+
+  renderStep(){
+    const lv=ST.curLv;
+    const stepData=lv.steps[ST.curStep];
+    const isFirstStep=ST.curStep===0;
+    const totalSteps=lv.steps.length;
+
+    // Determine scene and question (dynamic for step 2+)
+    let scene=stepData.scene;
+    let q=stepData.q;
+    if(!isFirstStep&&stepData.sceneByPick){
+      const prev=ST.stepPicks[ST.curStep-1];
+      scene=stepData.sceneByPick[prev]||stepData.sceneByPick[0];
+      q=stepData.qByPick[prev]||stepData.qByPick[0];
+    }
+
+    // Shuffle options but keep original index for scoring
+    const indexed=stepData.opts.map((o,i)=>({...o,origIdx:i}));
+    const shuffled=shuffle(indexed);
+
+    // Step indicator pips
+    const pips=Array.from({length:totalSteps},(_, i)=>`<div class="step-pip ${i<ST.curStep?'done':i===ST.curStep?'cur':''}"></div>`).join('');
+
+    const body=document.getElementById('lv-body');
+    body.innerHTML=`<div class="fi">
+      ${isFirstStep?`
+        <div class="insp mb14">
+          <div class="insp-lbl">審查官說</div>
+          <div class="insp-t f12" style="white-space:pre-line">${lv.pre}</div>
+        </div>`:`
+        <div class="card card-dk mb14" style="padding:14px 16px">
+          <div class="f10 ct3 mb6" style="letter-spacing:.07em">你剛才選了</div>
+          <div class="f12 ct2">${lv.steps[ST.curStep-1].opts[ST.stepPicks[ST.curStep-1]]?.t||''}</div>
+        </div>`}
+      <div class="scene mb12">${scene.replace(/\n/g,'<br>')}</div>
+      ${stepData.os?`<div class="fish-os">${stepData.os}</div>`:''}
+      <div class="step-indicator mb14">
+        ${pips}
+        <span class="step-label">第 ${ST.curStep+1} 步，共 ${totalSteps} 步</span>
+      </div>
+      <div class="f13 ct2 mb14 w5">${q}</div>
+      <div id="opts-wrap">
+        ${shuffled.map((o,dispIdx)=>`
+          <button class="opt" id="opt-${dispIdx}" onclick="G.pick(${o.origIdx},${dispIdx},${shuffled.length})">
+            <div class="onum">${dispIdx+1}</div>
+            <div>${o.t}</div>
+          </button>`).join('')}
+      </div>
+    </div>`;
+  },
+
+  pick(origIdx, dispIdx, total){
+    // Lock all options
+    for(let i=0;i<total;i++){
+      const el=document.getElementById('opt-'+i);
+      if(el){el.classList.add(i===dispIdx?'chosen':'dim');el.classList.add('locked')}
+    }
+
+    const lv=ST.curLv;
+    const stepData=lv.steps[ST.curStep];
+    const opt=stepData.opts[origIdx];
+
+    // Record pick
+    ST.stepPicks.push(origIdx);
+    if(stepData.cKey) ST.picks[stepData.cKey]=origIdx;
+
+    // Apply stats
+    Object.entries(opt.ch).forEach(([k,v])=>{ST.s[k]=clamp(ST.s[k]+v)});
+    // Fish state: weighted accumulation (later steps heavier)
+    const fsWeight=({1:1.0,2:1.0,3:1.2,4:1.5,5:1.5,6:2.0}[ST.curLv.id]||1)*
+                   ({0:1.0,1:1.3,2:1.6}[ST.curStep]||1.0);
+    ST.fishSum+=opt.fs*fsWeight;
+    ST.fishCount+=fsWeight;
+    ST.fish=Math.min(5,Math.max(0,Math.round(ST.fishSum/Math.max(1,ST.fishCount))));
+
+    // Type signals — weighted by level and step
+    const LW={1:1.0,2:1.0,3:1.2,4:1.5,5:1.5,6:2.0};
+    const SW={0:1.0,1:1.3,2:1.6};
+    const lw=LW[ST.curLv.id]||1.0;
+    const sw=SW[ST.curStep]||1.0;
+    const weight=lw*sw;
+    (opt.sig||[]).forEach(t=>{
+      if(ST.typeSig[t]!==undefined) ST.typeSig[t]+=2*weight;
+    });
+    if(opt.trap) ST.trapCount++;
+
+    const nextStep=ST.curStep+1;
+    if(nextStep<lv.steps.length){
+      // More steps
+      ST.curStep=nextStep;
+      setTimeout(()=>G.renderStep(),380);
+    } else {
+      // Level done
+      if(!ST.done.includes(lv.id)) ST.done.push(lv.id);
+      const nextLvIdx=LEVELS.findIndex(l=>l.id===lv.id)+1;
+      const hasNext=nextLvIdx<LEVELS.length;
+      // Show unlock overlay if good result
+      const goodResult=opt.fs<=1;
+      if(hasNext&&goodResult){
+        G.showUnlock(LEVELS[nextLvIdx],()=>G.showResult());
+      } else {
+        setTimeout(()=>G.showResult(),380);
+      }
+    }
+  },
+
+  showUnlock(nextLv, cb){
+    const ov=document.getElementById('ov');
+    document.getElementById('ov-ic').textContent=nextLv.ic;
+    document.getElementById('ov-t').textContent=`Level ${nextLv.id} 解鎖`;
+    document.getElementById('ov-s').textContent=nextLv.name;
+    ov.classList.add('on');
+    setTimeout(()=>{ov.classList.remove('on');cb&&cb()},2000);
+  },
+
+  showResult(){
+    const lv=ST.curLv;
+    const fk=ST.stepPicks.join('')||'_';
+    const hasTrap=ST.stepPicks.some((pi,si)=>lv.steps[si]?.opts[pi]?.trap);
+    const fb=lv.feedback[fk]||(hasTrap?lv.feedback['t']:null)||lv.feedback['_']||{wc:'wf-o',em:'🌊',t:'數據記錄中',d:'系統已記錄你的選擇。',sys:'繼續前進。'};
+    const remaining=6-ST.done.length;
+
+    document.getElementById('res-title').textContent=`Level ${lv.id} 審查回報`;
+    document.getElementById('res-body').innerHTML=`
+      <div class="wfeed ${fb.wc} mb14">
+        <div class="wf-em">${fb.em}</div>
+        <div class="wf-t">${fb.t}</div>
+        <div class="wf-d2">${fb.d}</div>
+        <div class="wf-sys">"${fb.sys}"</div>
+      </div>
+      <div class="card card-dk mb20" style="padding:14px 18px">
+        <div class="f11 ct3" style="letter-spacing:.07em">🔒 水質數據已封存</div>
+        <div class="f12 ct3 mt8" style="line-height:1.75">
+          系統正在記錄你的行為模式。<br>
+          ${remaining>0
+            ?`還有 <span style="color:var(--txt)">${remaining} 關</span>，結束後一次揭曉。`
+            :'所有數據已收集完畢。前往生成報告。'
+          }
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="G.go('map')">繼續 →</button>
+    `;
+    G.go('res');
+  },
+
+  // ── SCAN ───────────────────────────────────────────────────
+  startScan(){
+    G.go('scan');
+    const lines=[
+      '正在分析水溫穩定度資料...',
+      '正在比對飼料偏愛指數...',
+      '正在測量供養堅持係數...',
+      '正在驗算前後一致性差異...',
+      '正在偵測誘餌選項命中率...',
+      '正在評估自我覺察深度...',
+      '⚠️  警告：結果可能讓你有點中。',
+      '正在比對六大養魚類型...',
+      '正在判定養魚等級...',
+      '報告即將生成...'
+    ];
+    const cont=document.getElementById('scan-lines');
+    cont.innerHTML='';
+    let i=0;
+    function next(){
+      if(i>=lines.length){setTimeout(()=>G.showFinal(),500);return}
+      const d=document.createElement('div');
+      d.className='scan-line';d.textContent=lines[i];
+      d.style.animationDelay=`${i*0.04}s`;
+      cont.appendChild(d);i++;
+      setTimeout(next,460);
+    }
+    setTimeout(next,200);
+  },
+
+  // ── JUDGE ──────────────────────────────────────────────────
+  judgeType(){
+    const sig={...ST.typeSig};
+    // No stat-based boosts — type is purely behavioral pattern
+    // Tiebreaker: if two types are equal, use fish state as secondary signal
+    // Lower fish state (more positive) slightly favors deep
+    // Higher fish state (more negative) slightly favors ghost/puffer
+    const topScore=Math.max(...Object.values(sig));
+    const tied=Object.entries(sig).filter(([,v])=>v===topScore);
+    if(tied.length===1) return tied[0][0];
+    // Tiebreak by fish state
+    const fs=ST.fish;
+    if(fs<=1) return tied.find(([k])=>k==='deep')?.[0]||tied[0][0];
+    if(fs>=3) return tied.find(([k])=>k==='ghost'||k==='puffer')?.[0]||tied[0][0];
+    return tied[0][0];
+  },
+
+  judgeGrade(){
+    const a=avgStat(),m=minStat();
+    const vals=Object.values(ST.s);
+    const critLow=vals.filter(v=>v<35).length;
+    const veryLow=vals.filter(v=>v<45).length;
+    const spread=Math.max(...vals)-Math.min(...vals);
+    // Base grade from average + minimum
+    let g;
+    if(a>=78&&m>=65) g='S';
+    else if(a>=68&&m>=55) g='A';
+    else if(a>=56&&m>=45) g='B';
+    else if(a>=42&&m>=30) g='C';
+    else g='D';
+    // Penalty: extreme low dims pull grade down
+    const ord=['S','A','B','C','D'];
+    let gi=ord.indexOf(g);
+    if(critLow>=2) gi=Math.min(4,gi+2);       // 2+ stats < 35 → drop 2
+    else if(critLow>=1) gi=Math.min(4,gi+1);  // 1 stat < 35 → drop 1
+    else if(veryLow>=3) gi=Math.min(4,gi+1);  // 3+ stats < 45 → drop 1
+    if(spread>60&&m<40) gi=Math.min(4,gi+1);  // extreme imbalance → drop 1
+    return ord[gi];
+  },
+
+  // ── FINAL ──────────────────────────────────────────────────
+  showFinal(){
+    const typeKey=G.judgeType();
+    const gradeKey=G.judgeGrade();
+    const type=TYPES[typeKey];
+    const grade=GRADES[gradeKey];
+    const fs=fst();
+    const cs=consistencyScore();
+    const isConsistent=cs>=60;
+
+    document.getElementById('final-body').innerHTML=`
+      <div class="tc mb20">
+        <div class="grade-big" style="color:${grade.col};text-shadow:0 0 48px ${grade.sh}">${grade.g}</div>
+        <div class="grade-name">${grade.n}</div>
+        <div class="f11 ct3" style="letter-spacing:.06em">${ST.name} 的養魚資格判定</div>
+      </div>
+      <div class="insp mb14">
+        <div class="insp-lbl">系統判定</div>
+        <div class="insp-t f12" style="white-space:pre-line;line-height:2.1">${grade.open}</div>
+      </div>
+      <div class="card mb14">
+        <div class="f11 ct3 mb10" style="letter-spacing:.07em">你的養魚類型</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <div style="font-size:34px">${type.em}</div>
+          <div><div style="font-size:15px;font-weight:600;margin-bottom:4px">${type.n}</div>
+          <span class="chip ${gradeKey==='S'||gradeKey==='A'?'ch-t':gradeKey==='B'?'ch-a':'ch-c'}">${grade.g} 級</span></div>
+        </div>
+        <div class="f12 ct2" style="line-height:1.8">${type.desc}</div>
+      </div>
+
+      <!-- Consistency -->
+      <div class="consistency-badge ${isConsistent?'cb-consistent':'cb-inconsistent'} mb14">
+        <div class="cb-t ${isConsistent?'ctl':'cam'}">${isConsistent?'✓ 前後一致：穩定':'⚠️ 前後落差：高低壓反應不同'}</div>
+        <div class="cb-d" style="margin-bottom:6px">${isConsistent
+          ?'你在低壓和高壓情境下的反應方向一致。不管好壞，她知道她看到的是真實的你。'
+          :'你在低壓情境下的反應，和高壓情境下的反應方向相反。她感覺得出來哪一個才是真正的你。'
+        }</div>
+        <div class="f11 ct3">水溫穩定度 ${ST.s.w} — ${ST.s.w>=75?'穩定':ST.s.w>=55?'偶有波動':'明顯不穩定'}</div>
+      </div>
+
+      <div class="fpill mb14" style="border-color:${fs.col}40">
+        <div class="fpill-ic" style="font-size:26px">${fs.ic}</div>
+        <div><div class="fpill-lbl">小魚最終狀態</div>
+        <div class="fpill-val" style="color:${fs.col};font-size:15px">${fs.lbl}</div></div>
+      </div>
+
+      <div class="radar-wrap mb14">
+        <div class="radar-title">五維水質雷達圖</div>
+        <canvas id="radar-cvs" width="260" height="260"></canvas>
+        <div style="display:flex;justify-content:center;gap:16px;margin-top:10px">
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txt3)">
+            <div style="width:10px;height:2px;background:${grade.col};border-radius:1px"></div>你的數值
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txt3)">
+            <div style="width:10px;height:2px;background:rgba(255,255,255,0.28);border-radius:1px"></div>小魚門檻
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-hi mb10">
+        <div class="f11 ctl mb8" style="letter-spacing:.06em">你對小魚的吸引力</div>
+        <div class="f12 ct2" style="line-height:1.78">${type.attr}</div>
+      </div>
+      <div class="card card-warn mb14">
+        <div class="f11 cco mb8" style="letter-spacing:.06em">你讓她缺氧的風險</div>
+        <div class="f12 ct2" style="line-height:1.78">${type.risk}</div>
+      </div>
+      <div class="card card-dk mb14">
+        <div class="f11 ct3 mb8" style="letter-spacing:.06em">🐠 小魚說</div>
+        <div class="f12" style="color:var(--teal-l);line-height:1.85;font-style:italic;white-space:pre-line">${grade.fish_say}</div>
+      </div>
+      <div class="card mb20">
+        <div class="f11 ct3 mb12" style="letter-spacing:.07em">水質五維分析</div>
+        ${statBars()}
+      </div>
+      <button class="btn btn-p mb10" onclick="G.goShare('${typeKey}','${gradeKey}')">📊 生成分享卡</button>
+      <button class="btn btn-s" onclick="G.restart()">🔄 重新審查</button>
+    `;
+    G.go('final');
+    setTimeout(()=>G.drawRadar(grade.col),300);
+  },
+
+  drawRadar(accentCol){
+    const cvs=document.getElementById('radar-cvs');
+    if(!cvs)return;
+    const ctx=cvs.getContext('2d');
+    const W=260,H=260,cx=W/2,cy=H/2,R=96;
+    ctx.clearRect(0,0,W,H);
+    const keys=['w','f','p','l','a'];
+    const labels=['水溫穩定','飼料偏愛','堅持度','邏輯一致','自我覺察'];
+    const threshold=[62,58,60,55,58];
+    const n=keys.length;
+    const angles=keys.map((_,i)=>-Math.PI/2+(2*Math.PI/n)*i);
+
+    // Grid rings
+    for(let r=1;r<=5;r++){
+      ctx.beginPath();
+      angles.forEach((a,i)=>{
+        const rr=R*(r/5),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      });
+      ctx.closePath();
+      ctx.strokeStyle=`rgba(255,255,255,${r===3?0.1:0.05})`;ctx.lineWidth=1;ctx.stroke();
+    }
+    // Spokes
+    angles.forEach(a=>{
+      ctx.beginPath();ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
+      ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;ctx.stroke();
+    });
+    // Threshold
+    ctx.beginPath();
+    angles.forEach((a,i)=>{
+      const rr=R*(threshold[i]/100),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.setLineDash([3,4]);ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
+
+    // Player fill
+    const vals=keys.map(k=>clamp(ST.s[k]));
+    ctx.beginPath();
+    angles.forEach((a,i)=>{
+      const rr=R*(vals[i]/100),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    const grd=ctx.createLinearGradient(0,0,W,H);
+    grd.addColorStop(0,accentCol+'38');grd.addColorStop(1,accentCol+'18');
+    ctx.fillStyle=grd;ctx.fill();
+    ctx.strokeStyle=accentCol+'cc';ctx.lineWidth=2;ctx.stroke();
+
+    // Dots + value labels
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    angles.forEach((a,i)=>{
+      const rr=R*(vals[i]/100),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);
+      ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
+      ctx.fillStyle=accentCol;ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=1.5;ctx.stroke();
+      // label
+      const lr=R+22,lx=cx+lr*Math.cos(a),ly=cy+lr*Math.sin(a);
+      ctx.font='10px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.55)';
+      ctx.fillText(labels[i],lx,ly);
+      // value
+      const vr=R*(vals[i]/100)+14,vx=cx+vr*Math.cos(a),vy=cy+vr*Math.sin(a);
+      ctx.font='bold 10px "Noto Sans TC",sans-serif';ctx.fillStyle=accentCol;
+      ctx.fillText(vals[i],vx,vy);
+    });
+  },
+
+  // ── SHARE ──────────────────────────────────────────────────
+  goShare(typeKey,gradeKey){
+    const type=TYPES[typeKey];
+    const grade=GRADES[gradeKey];
+    const a=avgStat();
+    const fs=fst();
+    _shareTxt=`【小魚養成資格審查】\n${grade.g}級｜${type.n}\n\n"${type.share}"\n\n小魚說：${grade.fish_say.split('\n')[0]}\n小魚狀態：${fs.lbl}\n水質綜合分：${a}/100`;
+
+    document.getElementById('share-body').innerHTML=`
+      <div class="f12 ct3 tc mb14">長按圖片可儲存，或點擊下方按鈕</div>
+      <div class="share-wrap mb10"><canvas id="share-cvs"></canvas></div>
+      <div class="sbtns">
+        <button class="sbtn sbtn-save" onclick="G.saveImg()">💾 儲存圖片</button>
+        <button class="sbtn sbtn-copy" onclick="G.copyTxt()">📋 複製文字</button>
+      </div>
+      <div class="card card-dk">
+        <div class="f11 ct3 mb8" style="letter-spacing:.06em">分享短句</div>
+        <div class="f13" style="color:var(--teal-xl);line-height:1.85;font-style:italic">"${type.share}"</div>
+      </div>
+    `;
+    G.go('share');
+    setTimeout(()=>G.drawShare(type,grade,a,fs),200);
+  },
+
+  drawShare(type,grade,a,fs){
+    const cvs=document.getElementById('share-cvs');
+    if(!cvs)return;
+    _shareCvs=cvs;
+    const W=750,H=480;
+    cvs.width=W;cvs.height=H;
+    cvs.style.width='100%';cvs.style.height='auto';
+    const ctx=cvs.getContext('2d');
+
+    // BG
+    const bg=ctx.createLinearGradient(0,0,W,H);
+    bg.addColorStop(0,'#040d18');bg.addColorStop(0.5,'#0a1e38');bg.addColorStop(1,'#071520');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    // Glow
+    const gc1=ctx.createRadialGradient(100,H-80,10,100,H-80,240);
+    gc1.addColorStop(0,grade.col+'25');gc1.addColorStop(1,'transparent');
+    ctx.fillStyle=gc1;ctx.fillRect(0,0,W,H);
+    const gc2=ctx.createRadialGradient(W-80,80,10,W-80,80,200);
+    gc2.addColorStop(0,'rgba(15,60,160,0.22)');gc2.addColorStop(1,'transparent');
+    ctx.fillStyle=gc2;ctx.fillRect(0,0,W,H);
+    // Scanlines
+    for(let y=0;y<H;y+=3){ctx.fillStyle='rgba(0,0,0,0.055)';ctx.fillRect(0,y,W,1)}
+    // Border
+    rrect(ctx,8,8,W-16,H-16,12);ctx.strokeStyle=grade.col+'40';ctx.lineWidth=1.5;ctx.stroke();
+
+    // Grade
+    ctx.save();ctx.shadowColor=grade.col;ctx.shadowBlur=40;
+    ctx.font='900 96px "Noto Serif TC",serif';
+    ctx.fillStyle=grade.col;ctx.textAlign='left';ctx.fillText(grade.g,36,136);
+    ctx.restore();
+    ctx.font='bold 24px "Noto Serif TC",serif';ctx.fillStyle='#e8f4ff';ctx.textAlign='left';
+    ctx.fillText(grade.n,36,172);
+    ctx.font='14px "Noto Sans TC",sans-serif';ctx.fillStyle=grade.col;
+    ctx.fillText(`${type.em} ${type.n}`,36,200);
+    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';
+    ctx.fillText(ST.name+' 的養魚資格',36,224);
+    // Divider
+    ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(36,242);ctx.lineTo(W-36,242);ctx.stroke();
+
+    // Mini radar
+    drawMR(ctx,130,356,86,grade.col);
+
+    // Stat bars
+    const sx=295,sw=255,gap=34;
+    ['w','f','p','l','a'].forEach((k,i)=>{
+      const v=clamp(ST.s[k]);
+      const labels=['水溫穩定','飼料偏愛','堅持度','邏輯一致','自我覺察'];
+      const y=268+i*gap;
+      ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.42)';ctx.textAlign='left';
+      ctx.fillText(labels[i],sx,y);
+      rrect(ctx,sx,y+6,sw,9,3);ctx.fillStyle='rgba(255,255,255,0.07)';ctx.fill();
+      const fc=v<40?'#e03a3a':v<65?'#f0a030':grade.col;
+      rrect(ctx,sx,y+6,Math.max(6,sw*(v/100)),9,3);ctx.fillStyle=fc;ctx.fill();
+      ctx.font='11px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.6)';ctx.textAlign='right';
+      ctx.fillText(v,sx+sw+28,y+14);
+    });
+
+    // Fish state
+    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';ctx.textAlign='left';
+    ctx.fillText('小魚最終狀態',sx,420);
+    ctx.font='bold 15px "Noto Sans TC",sans-serif';ctx.fillStyle=grade.col;
+    ctx.fillText(fs.lbl,sx,440);
+    // Score
+    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';ctx.textAlign='right';
+    ctx.fillText('水質綜合分',W-36,420);
+    ctx.save();ctx.shadowColor=grade.col;ctx.shadowBlur=16;
+    ctx.font='900 40px "Noto Serif TC",serif';ctx.fillStyle=grade.col;
+    ctx.fillText(a,W-36-28,455);ctx.restore();
+    ctx.font='13px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.35)';
+    ctx.fillText('/100',W-36,458);
+
+    // Quote (bottom)
+    const q=type.share;
+    ctx.font='italic 12px "Noto Serif TC",serif';ctx.fillStyle='rgba(255,255,255,0.3)';ctx.textAlign='left';
+    const qw=W-76;let ql='';const qlines=[];
+    for(const ch of `"${q}"`){
+      if(ctx.measureText(ql+ch).width>qw&&ql){qlines.push(ql);ql=ch}else ql+=ch;
+    }
+    if(ql)qlines.push(ql);
+    qlines.forEach((line,i)=>ctx.fillText(line,36,H-38-(qlines.length-1-i)*18));
+    // Watermark
+    ctx.font='10px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.16)';ctx.textAlign='right';
+    ctx.fillText('小魚養成資格審查',W-18,H-14);
+  },
+
+  saveImg(){
+    if(!_shareCvs)return;
+    const a=document.createElement('a');
+    a.download=`小魚資格審查-${ST.name}.png`;
+    a.href=_shareCvs.toDataURL('image/png');a.click();
+    showToast('圖片下載中...');
+  },
+
+  copyTxt(){
+    if(navigator.clipboard&&_shareTxt){
+      navigator.clipboard.writeText(_shareTxt).then(()=>showToast('✓ 已複製到剪貼板'));
+    } else {
+      const ta=document.createElement('textarea');
+      ta.value=_shareTxt;document.body.appendChild(ta);ta.select();
+      document.execCommand('copy');document.body.removeChild(ta);
+      showToast('✓ 已複製到剪貼板');
+    }
+  },
+
+  restart(){
+    Object.assign(ST,{
+      name:'神秘玩家',s:{w:50,f:50,p:50,l:50,a:50},fish:1,
+      fishSum:0,fishCount:0,
+      done:[],picks:{},typeSig:{deep:0,busy:0,flirt:0,free:0,puffer:0,ghost:0},
+      trapCount:0,curLv:null,curStep:0,stepPicks:[]
+    });
+    document.getElementById('name-in').value='';
+    _shareCvs=null;_shareTxt='';
+    G.go('home');
+  }
+};
+
+// ── Canvas helpers ─────────────────────────────────────────────
+function rrect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function drawMR(ctx,cx,cy,R,col){
+  const keys=['w','f','p','l','a'];
+  const n=5;const angles=keys.map((_,i)=>-Math.PI/2+(2*Math.PI/n)*i);
+  for(let r=1;r<=4;r++){
+    ctx.beginPath();
+    angles.forEach((a,i)=>{const rr=R*(r/4),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
+    ctx.closePath();ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;ctx.stroke();
+  }
+  angles.forEach(a=>{ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;ctx.stroke()});
+  const vals=keys.map(k=>clamp(ST.s[k]));
+  ctx.beginPath();
+  angles.forEach((a,i)=>{const rr=R*(vals[i]/100),x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
+  ctx.closePath();ctx.fillStyle=col+'28';ctx.fill();ctx.strokeStyle=col+'bb';ctx.lineWidth=2;ctx.stroke();
+  const lbls=['水溫','飼料','堅持','邏輯','覺察'];
+  ctx.font='9px "Noto Sans TC",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  angles.forEach((a,i)=>{
+    const lr=R+14,lx=cx+lr*Math.cos(a),ly=cy+lr*Math.sin(a);
+    ctx.fillStyle='rgba(255,255,255,0.38)';ctx.fillText(lbls[i],lx,ly);
+  });
+}
+
+// ── Bubbles ────────────────────────────────────────────────────
+(function(){
+  for(let i=0;i<12;i++){
+    const b=document.createElement('div');b.className='bbl';
+    const sz=Math.random()*18+4;
+    b.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*16}s`;
+    document.body.appendChild(b);
+  }
+})();
+</script>
+</body>
+</html>
