@@ -252,9 +252,19 @@ hr.d{border:none;border-top:1px solid var(--bb);margin:14px 0}
       </div>
       <div class="insp-q">「她可以心動，但她不想溺水。」</div>
     </div>
-    <div class="card card-dk f12 ct3 mb20" style="line-height:1.85">
+    <div class="card card-dk f12 ct3 mb14" style="line-height:1.85">
       完成 6 關情境，每關 2–3 步選擇。<br>
       系統在背後記錄你的行為模式，<br>最後判定你的<span style="color:var(--txt)">養魚類型</span>與<span style="color:var(--txt)">養魚等級</span>。
+    </div>
+    <div class="card card-dk mb20" style="border-color:rgba(15,184,122,0.12);padding:16px 20px">
+      <div style="border-left:2px solid rgba(15,184,122,0.3);padding-left:14px">
+        <div class="f12 ct3" style="line-height:2.1">
+          六關之後，<br>
+          還有更深的地方。<br><br>
+          那裡測的不是你能不能讓她不缺氧，<br>
+          而是你給的愛，<span style="color:var(--teal-l)">她接不接得到</span>。
+        </div>
+      </div>
     </div>
   </div>
   <button class="btn btn-p" onclick="G.go('name')">🎮 開始資格審查</button>
@@ -1990,7 +2000,7 @@ ${grade.g}級｜${type.n}${p2text}
         `display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">`+
         `${locked?'🔒':lv.ic}</div>`+
         `<div style="flex:1">`+
-        `<div style="font-size:14px;font-weight:500;margin-bottom:2px">${lv.id==='p1'?'Phase 2-1':lv.id==='p2'?'Phase 2-2':lv.id==='p3'?'Phase 2-3':'Phase 2-4'}｜${lv.name}</div>`+
+        `<div style="font-size:14px;font-weight:500;margin-bottom:2px">${lv.id==='p1'?'第一題':lv.id==='p2'?'第二題':lv.id==='p3'?'第三題':'第四題'}｜${lv.name}</div>`+
         `<div class="f11 ct3">${lv.theme}</div></div>`+
         `${done?'<span style="font-size:15px">✅</span>':''}</div>`;
     }).join('');
@@ -2003,7 +2013,8 @@ ${grade.g}級｜${type.n}${p2text}
   startP2Lv(id){
     const lv=P2_LEVELS.find(l=>l.id===id);
     ST.curLv=lv; ST.curStep=0; ST.stepPicks=[];
-    document.getElementById('p2lv-title').textContent=`P2-${id.replace('p','')}｜${lv.name}`;
+    const p2nums={'p1':'第一題','p2':'第二題','p3':'第三題','p4':'第四題'};
+    document.getElementById('p2lv-title').textContent=`${p2nums[id]||id}｜${lv.name}`;
     document.getElementById('p2lv-sub').textContent=lv.theme;
     // dots
     document.getElementById('p2lv-dots').innerHTML=P2_LEVELS.map(l=>{
