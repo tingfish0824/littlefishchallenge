@@ -372,6 +372,73 @@ hr.d{border:none;border-top:1px solid var(--bb);margin:14px 0}
 <div class="pad fi" id="share-body"></div>
 </div>
 
+<!-- PHASE 1 GATEWAY -->
+<div class="scr" id="s-gateway">
+<div class="topbar">
+  <button class="back" onclick="G.go('final')">←</button>
+  <div class="tb-mid"><div class="tb-t">深水區入口</div></div>
+  <div style="width:34px"></div>
+</div>
+<div class="pad" style="display:flex;flex-direction:column;flex:1;min-height:calc(100vh - 60px)">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center" id="gateway-inner"></div>
+  <div id="gateway-btns"></div>
+</div>
+</div>
+
+<!-- P2 MAP -->
+<div class="scr" id="s-p2map">
+<div class="topbar">
+  <button class="back" onclick="G.go('scan')">←</button>
+  <div class="tb-mid"><div class="tb-t">深水區測試</div><div class="tb-s">深水區</div></div>
+  <div style="width:34px;font-size:16px;text-align:right">🔬</div>
+</div>
+<div class="pad">
+  <div class="insp mb14">
+    <div class="insp-lbl">深水區說明</div>
+    <div class="insp-t f12" style="white-space:pre-line">前六關測的是：你能不能讓她不缺氧。
+
+這四關測的是：
+你給的愛，是不是她需要的那種。
+以及你現在的人生，有沒有她的位置。</div>
+  </div>
+  <div id="p2-list"></div>
+</div>
+</div>
+
+<!-- P2 LEVEL -->
+<div class="scr" id="s-p2lv">
+<div class="topbar">
+  <button class="back" onclick="G.go('p2map')">←</button>
+  <div class="tb-mid">
+    <div class="tb-t" id="p2lv-title">P2 Level 1</div>
+    <div class="tb-s" id="p2lv-sub">—</div>
+  </div>
+  <div style="width:34px"></div>
+</div>
+<div class="dots" id="p2lv-dots"></div>
+<div id="p2lv-body" class="pad" style="padding-top:14px"></div>
+</div>
+
+<!-- P2 RESULT -->
+<div class="scr" id="s-p2res">
+<div class="topbar">
+  <button class="back" onclick="G.go('p2map')">←</button>
+  <div class="tb-mid"><div class="tb-t" id="p2res-title">回報</div></div>
+  <div style="width:34px"></div>
+</div>
+<div class="pad fi" id="p2res-body"></div>
+</div>
+
+</div>
+
+<!-- PHASE 1 GATEWAY -->
+<div class="scr" id="s-gateway">
+<div class="topbar">
+  <button class="back" onclick="G.go('final')">←</button>
+  <div class="tb-mid"><div class="tb-t">深水區入口</div></div>
+  <div style="width:34px"></div>
+</div>
+<div class="pad fi" id="gateway-body" style="display:flex;flex-direction:column;flex:1"></div>
 </div>
 
 <div class="ov" id="ov">
@@ -765,6 +832,240 @@ const LEVELS=[
  }
 }
 ];
+// ── PHASE 2 ───────────────────────────────────────────────────
+const LOVE_LANGS={
+  touch:{n:'身體接觸',em:'🤝'},
+  time:{n:'精心時刻',em:'⏱️'},
+  words:{n:'肯定言詞',em:'💬'},
+  acts:{n:'服務行動',em:'🔧'},
+  gifts:{n:'接受禮物',em:'🎁'}
+};
+const FISH_LOVE=['touch','time','words','acts','gifts'];
+
+const P2_LEVELS=[
+{id:'p1',name:'你主動給予的方式',theme:'愛之語偵測 I',ic:'💝',
+ pre:'第一題。',
+ steps:[
+  {scene:'你們在一起，她說：「我最近真的好累。」然後沉默了。',
+   os:'她說了，她在等你的反應。',
+   q:'你的第一個反應是？',
+   opts:[
+    {t:'靠近她，手放在她的肩上。',
+     ch:{w:0,f:5,p:3,l:0,a:0},fs:0,sig:['deep'],trap:false,ll:'touch'},
+    {t:'「跟我說說看，怎麼了？」',
+     ch:{w:0,f:8,p:3,l:0,a:0},fs:0,sig:['deep'],trap:false,ll:'time'},
+    {t:'「你很辛苦，我看得出來。」',
+     ch:{w:0,f:3,p:0,l:0,a:0},fs:1,sig:['flirt'],trap:false,ll:'words'},
+    {t:'「你需要我幫你做什麼嗎？」',
+     ch:{w:0,f:3,p:0,l:0,a:0},fs:1,sig:['busy'],trap:false,ll:'acts'},
+    {t:'「等一下，我去買東西給你。」',
+     ch:{w:0,f:3,p:0,l:0,a:0},fs:1,sig:['flirt'],trap:false,ll:'gifts'}
+   ]
+  },
+  {scene:'後來你們分開了。你到家，打開對話框。',
+   os:'他剛才做了什麼，現在又會說什麼？',
+   q:'你傳訊息說？',
+   opts:[
+    {t:'「我有點捨不得你回去。」',
+     ch:{w:0,f:8,p:3,l:0,a:0},fs:0,sig:['deep'],trap:false,ll:'touch'},
+    {t:'「你今天說的那件事，我回家一直在想。」',
+     ch:{w:0,f:8,p:5,l:0,a:5},fs:0,sig:['deep'],trap:false,ll:'time'},
+    {t:'「你很不容易，撐住。」',
+     ch:{w:0,f:3,p:0,l:0,a:0},fs:1,sig:['flirt'],trap:false,ll:'words'},
+    {t:'「需要我做什麼就說。」',
+     ch:{w:0,f:0,p:3,l:0,a:0},fs:1,sig:['busy'],trap:false,ll:'acts'},
+    {t:'「我買了你上次說想吃的，明天帶給你。」',
+     ch:{w:0,f:5,p:3,l:0,a:0},fs:0,sig:['flirt'],trap:false,ll:'gifts'}
+   ]
+  }
+ ],
+ // Feedback based on dominant ll across both steps (computed in showP2Result)
+ feedback:{
+   'touch':{wc:'wf-g',em:'🤝',t:'給予方式：實體存在',
+    d:'你靠近她，你說你捨不得她回去。你給的是身體的在場感——這是她最需要的那種。',
+    sys:'她不需要你說很多，她需要你在。'},
+   'time':{wc:'wf-g',em:'⏱️',t:'給予方式：完整注意力',
+    d:'你問了她，你也記著她說的事。你給的是完整的在意——把她放在心上的那種。',
+    sys:'她說過的事，你記得。這件事比說什麼都重要。'},
+   'words':{wc:'wf-o',em:'💬',t:'給予方式：言語確認',
+    d:'你用說的讓她知道你看見她。她感覺到了，只是她需要的不只是被說出來。',
+    sys:'肯定言詞有溫度，但她更需要你的存在本身。'},
+   'acts':{wc:'wf-o',em:'🔧',t:'給予方式：服務行動',
+    d:'你問她需要什麼，你等她說再動。你有心，但她有時候需要你不用等她說就在了。',
+    sys:'主動出現，比等她開口更有力。'},
+   'gifts':{wc:'wf-o',em:'🎁',t:'給予方式：記得細節',
+    d:'你記得她說過想要的，你帶給她。這個細節讓她知道你有在聽，只是她需要的不只是被記得。',
+    sys:'禮物說明你有心，但她最渴望的是你的出現。'},
+   '_':{wc:'wf-g',em:'💝',t:'已記錄',
+    d:'系統已記錄你表達在意的方式。',sys:'繼續。'}
+ }
+},
+
+{id:'p2',name:'你怎麼接住她的需要',theme:'愛之語偵測 II',ic:'🤝',
+ pre:'第二題。',
+ steps:[
+  {scene:'她突然說：「你可以過來陪我嗎？」',
+   os:'她說出這句話不容易。',
+   q:'你說？',
+   opts:[
+    {t:'「好，我現在出發。」',
+     ch:{w:5,f:10,p:5,l:0,a:0},fs:0,sig:['deep'],trap:false,ll:'touch'},
+    {t:'「怎麼了，發生什麼事？」',
+     ch:{w:3,f:8,p:3,l:0,a:0},fs:0,sig:['deep'],trap:false,ll:'time'},
+    {t:'「當然，你還好嗎？」',
+     ch:{w:3,f:5,p:3,l:0,a:0},fs:1,sig:['flirt'],trap:false,ll:'words'},
+    {t:'「我順路買東西過去。」',
+     ch:{w:3,f:5,p:3,l:0,a:0},fs:1,sig:['busy'],trap:false,ll:'gifts'}
+   ]
+  },
+  {scene:'你到了之後，她沒有說話，只是靠著你。',
+   os:'她不需要你說什麼，她需要你在。',
+   q:'你怎麼做？',
+   opts:[
+    {t:'就這樣待著，什麼都沒說。',
+     ch:{w:5,f:10,p:5,l:0,a:0},fs:0,sig:['deep'],trap:false,ll:'touch'},
+    {t:'抱著她。',
+     ch:{w:8,f:12,p:5,l:0,a:0},fs:0,sig:['deep'],trap:false,ll:'touch'},
+    {t:'「想說的時候再說，我在。」',
+     ch:{w:3,f:8,p:3,l:0,a:0},fs:0,sig:['deep'],trap:false,ll:'time'},
+    {t:'開始說一些輕鬆的事，幫她轉移。',
+     ch:{w:0,f:3,p:3,l:0,a:0},fs:1,sig:['flirt'],trap:false,ll:'acts'}
+   ]
+  }
+ ],
+ feedback:{
+   'touch':{wc:'wf-g',em:'🤝',t:'接住方式：到場 + 待著',
+    d:'她說來陪我，你去了，你抱著她或就待著。身體接觸對你來說是自然反應，她感覺到了。',
+    sys:'她說的不多，你做的說明了一切。'},
+   'time':{wc:'wf-g',em:'⏱️',t:'接住方式：到場 + 給空間',
+    d:'你去了，你給她說或不說的空間。你讓她感覺到你在，也感覺到你沒有催她。',
+    sys:'陪伴不是說話，是讓她知道你在。'},
+   'words':{wc:'wf-o',em:'💬',t:'接住方式：確認 + 到場',
+    d:'你問了狀況才去。她感覺到你在意，只是在到場之前多了一個確認的步驟。',
+    sys:'問了再去，比不去好。但她說的那句話，本身就是答案了。'},
+   'acts':{wc:'wf-o',em:'🔧',t:'接住方式：到場 + 轉移',
+    d:'你去了，你試著讓她心情好一點。你有心，只是她需要的可能是你停下來陪著她，而不是被帶走注意力。',
+    sys:'方向對了，方式可以再調整。'},
+   'gifts':{wc:'wf-o',em:'🎁',t:'接住方式：帶東西過去',
+    d:'你去了，你還帶了東西。她收到了你的心意，只是她說「你可以來陪我嗎」，要的是你，不是東西。',
+    sys:'禮物加分，但出現本身才是重點。'},
+   '_':{wc:'wf-o',em:'🤝',t:'已記錄',d:'數據已記錄。',sys:'繼續。'}
+ }
+},
+
+{id:'p3',name:'你有沒有記得她',theme:'愛之語偵測 III',ic:'🧠',
+ pre:'第三題。',
+ steps:[
+  {scene:'你知道她最近壓力很大。你路過她說過很想去的那家店。',
+   os:'她沒有要求你做什麼。',
+   q:'你怎麼做？',
+   opts:[
+    {t:'買了帶給她，傳訊說「剛好路過」。',
+     ch:{w:0,f:8,p:3,l:0,a:0},fs:0,sig:['flirt'],trap:false,ll:'gifts'},
+    {t:'傳訊問她今天好一點了嗎。',
+     ch:{w:0,f:10,p:5,l:0,a:5},fs:0,sig:['deep'],trap:false,ll:'time'},
+    {t:'傳她一句「你最近很不容易，撐住。」',
+     ch:{w:0,f:5,p:3,l:0,a:0},fs:1,sig:['flirt'],trap:false,ll:'words'},
+    {t:'沒有特別做什麼，等她說需要再行動。',
+     ch:{w:0,f:-5,p:-3,l:0,a:-3},fs:2,sig:['ghost'],trap:false,ll:'acts'}
+   ]
+  },
+  {scene:'她回覆了。不管她說什麼，你說？',
+   os:'她在看你有沒有把她放在日常裡。',
+   q:'你說？',
+   opts:[
+    {t:'「你說過的事我不會忘。」',
+     ch:{w:0,f:10,p:5,l:0,a:5},fs:0,sig:['deep'],trap:false,ll:'time'},
+    {t:'「我有在想你最近過得怎樣。」',
+     ch:{w:0,f:8,p:5,l:0,a:3},fs:0,sig:['deep'],trap:false,ll:'time'},
+    {t:'「希望你今天好一點。」',
+     ch:{w:0,f:5,p:3,l:0,a:0},fs:1,sig:['flirt'],trap:false,ll:'words'},
+    {t:'「有需要就說，我可以幫。」',
+     ch:{w:0,f:3,p:3,l:0,a:0},fs:1,sig:['busy'],trap:false,ll:'acts'}
+   ]
+  }
+ ],
+ feedback:{
+   'gifts':{wc:'wf-g',em:'🎁',t:'記得方式：帶著她說過的',
+    d:'你路過了，你記得了，你帶給她了。她知道這不是巧合，是你有在記著她。',
+    sys:'這個細節，比說一百句更有重量。'},
+   'time':{wc:'wf-g',em:'⏱️',t:'記得方式：問了她',
+    d:'你沒有帶東西，但你問了她今天好一點了嗎。她感覺到自己被放在你的日常裡。',
+    sys:'問候本身說明你在想她。'},
+   'words':{wc:'wf-o',em:'💬',t:'記得方式：說了一句',
+    d:'你說了一句讓她知道你看見她。有溫度，只是她也想知道你有沒有真的在記著她這個人。',
+    sys:'說了比沒說好，但記得加上行動更有力。'},
+   'acts':{wc:'wf-b',em:'🔧',t:'記得方式：等她先說',
+    d:'你路過了，但你什麼都沒做。你等她說需要，但她沒說——她以為你沒有注意到。',
+    sys:'有時候她需要的不是你回應，是你主動。'},
+   '_':{wc:'wf-o',em:'🧠',t:'已記錄',d:'數據已記錄。',sys:'最後一關。'}
+ }
+},
+
+{id:'p4',name:'你現在有沒有她的位置',theme:'關係深度意願測試',ic:'🔭',
+ pre:'最後一題。這裡沒有提示。',
+ steps:[
+  {scene:'她說：「我覺得最難的是，兩個人都要有空間讓對方進來。你現在有嗎？」',
+   os:'她在問的，是這個。',
+   q:'你說？',
+   opts:[
+    {t:'停了一下，說：「我知道我現在某些部分還不夠穩定，但我有在調整。」',
+     ch:{w:0,f:0,p:0,l:12,a:15},fs:0,sig:['deep'],trap:false,ll:null},
+    {t:'「有啊，我覺得我準備好了。」',
+     ch:{w:0,f:0,p:0,l:-5,a:-8},fs:1,sig:['flirt'],trap:true,ll:null},
+    {t:'「這個問題很好，但我現在不確定。」',
+     ch:{w:0,f:0,p:0,l:3,a:5},fs:1,sig:['ghost'],trap:false,ll:null},
+    {t:'「這種事不用想太多。」',
+     ch:{w:0,f:0,p:0,l:-8,a:-10},fs:2,sig:['free'],trap:false,ll:null}
+   ]
+  },
+  {scene:'你說：「如果這段關係需要你定期調整自己，你願意嗎？」',
+   os:'她不是要你答應什麼，她只是想知道你有沒有想過這件事。',
+   q:'你說？',
+   opts:[
+    {t:'「願意，但我希望是雙向的。」',
+     ch:{w:0,f:0,p:0,l:10,a:12},fs:0,sig:['deep'],trap:false,ll:null},
+    {t:'「願意。」',
+     ch:{w:0,f:0,p:0,l:5,a:5},fs:1,sig:['busy'],trap:false,ll:null},
+    {t:'「要看情況，我不想為了關係失去自己。」',
+     ch:{w:0,f:0,p:0,l:-3,a:-3},fs:2,sig:['free'],trap:false,ll:null},
+    {t:'「好的關係不需要這麼費力。」',
+     ch:{w:0,f:0,p:0,l:-10,a:-12},fs:3,sig:['ghost'],trap:false,ll:null}
+   ]
+  }
+ ],
+ feedback:{
+   '00':{wc:'wf-g',em:'🔭',t:'深度意願：具備',
+    d:'你承認了不夠穩定，你也說你願意雙向調整。這兩件事同時出現，是她很難遇到的。',
+    sys:'她不是要你完美，她要的是你真的在想這件事。'},
+   '01':{wc:'wf-g',em:'🔭',t:'深度意願：誠實',
+    d:'你承認了不夠穩定，你說你願意。這個組合讓她相信你是真的願意，不是表演。',
+    sys:'承認不夠完美，反而是最有說服力的。'},
+   '10':{wc:'wf-o',em:'🌊',t:'深度意願：太快',
+    d:'你說準備好了，你說願意且雙向。聽起來不錯，但「我準備好了」這四個字，她聽得出來有沒有想過。',
+    sys:'意願有，準備度還需要時間觀察。'},
+   '20':{wc:'wf-o',em:'🌊',t:'深度意願：誠實但方向對',
+    d:'你說不確定，但你說願意且雙向。她比較信這個組合——不確定但願意調整，比假裝確定更真實。',
+    sys:'說不確定不是問題，說了然後願意是重點。'},
+   '02':{wc:'wf-b',em:'🔭',t:'深度意願：前後不一致',
+    d:'你說準備好了，但你說要看情況。這兩句話不太一樣，她注意到了。',
+    sys:'前後一致比答案漂亮更重要。'},
+   '03':{wc:'wf-b',em:'🔭',t:'深度意願：有落差',
+    d:'你說準備好了，但你說好的關係不費力。她聽到這句話會安靜下來。',
+    sys:'你喜歡她，但你對深度關係的理解，跟她不太一樣。'},
+   '22':{wc:'wf-b',em:'🔭',t:'深度意願：迴避',
+    d:'你說不確定，你也說要看情況。她感覺你還沒想清楚，也不確定你是否在想。',
+    sys:'誠實是好的，但她需要知道你有在往前走。'},
+   '33':{wc:'wf-b',em:'🔭',t:'深度意願：方向不同',
+    d:'你說這種事不用想太多，你說好的關係不費力。她對深度關係的理解跟你不一樣。',
+    sys:'不是對錯的問題，是頻道不同。'},
+   '_':{wc:'wf-o',em:'🔭',t:'已記錄',d:'數據已記錄。',sys:'計算完成。'}
+ }
+}
+];
+
+const P2ST={done:[],loveLang:{},p1ll:[],p2ll:[],p3ll:[],p3picks:[],p4picks:[],readiness:'',loveMatch:''};
+
 // ── TYPES ─────────────────────────────────────────────────────
 const TYPES={
   deep:{n:'深海續航型',em:'🌊',
@@ -898,13 +1199,14 @@ function consistencyScore(){
 // ================================================================
 // NAVIGATION
 // ================================================================
-const SCREENS={home:'s-home',name:'s-name',map:'s-map',lv:'s-lv',res:'s-res',scan:'s-scan',final:'s-final',share:'s-share'};
+const SCREENS={home:'s-home',name:'s-name',map:'s-map',lv:'s-lv',res:'s-res',scan:'s-scan',final:'s-final',share:'s-share',p2map:'s-p2map',p2lv:'s-p2lv',p2res:'s-p2res',gateway:'s-gateway'};
 const G={
   go(id){
     document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
     const el=document.getElementById(SCREENS[id]||id);
     if(el){el.classList.add('on');el.scrollTop=0}
     if(id==='map')G.renderMap();
+    if(id==='p2map')G.renderP2Map();
   },
 
   saveName(){
@@ -1120,7 +1422,8 @@ const G={
       '⚠️  警告：結果可能讓你有點中。',
       '正在比對六大養魚類型...',
       '正在判定養魚等級...',
-      '報告即將生成...'
+      '報告即將生成...',
+      '報告生成完畢，正在整理結果...'
     ];
     const cont=document.getElementById('scan-lines');
     cont.innerHTML='';
@@ -1251,11 +1554,19 @@ const G={
         <div class="f11 ct3 mb12" style="letter-spacing:.07em">水質五維分析</div>
         ${statBars()}
       </div>
+      <!-- P2 Results -->
+      <div id="p2-result-block"></div>
+      ${P2ST.done.length<4?`
+      <button class="btn btn-p mb10" onclick="G.showGateway('${gradeKey}','${typeKey}')">🔬 進入深水區測試 →</button>
+      <button class="btn btn-s mb10" onclick="G.goShare('${typeKey}','${gradeKey}')">🪣 讓她來看看這個魚缸</button>
+      `:`
       <button class="btn btn-p mb10" onclick="G.goShare('${typeKey}','${gradeKey}')">📊 生成分享卡</button>
+      `}
       <button class="btn btn-s" onclick="G.restart()">🔄 重新審查</button>
     `;
+    G._lastTypeKey=typeKey;G._lastGradeKey=gradeKey;
     G.go('final');
-    setTimeout(()=>G.drawRadar(grade.col),300);
+    setTimeout(()=>{G.drawRadar(grade.col);G.renderP2ResultBlock();},300);
   },
 
   drawRadar(accentCol){
@@ -1328,11 +1639,38 @@ const G={
 
   // ── SHARE ──────────────────────────────────────────────────
   goShare(typeKey,gradeKey){
-    const type=TYPES[typeKey];
-    const grade=GRADES[gradeKey];
+    const type=TYPES[typeKey]||TYPES.deep;
+    const grade=GRADES[gradeKey]||GRADES.C;
     const a=avgStat();
     const fs=fst();
-    _shareTxt=`【小魚養成資格審查】\n${grade.g}級｜${type.n}\n\n"${type.share}"\n\n小魚說：${grade.fish_say.split('\n')[0]}\n小魚狀態：${fs.lbl}\n水質綜合分：${a}/100`;
+    const hasP2=P2ST.done.length>=4;
+
+    // Build share text
+    let p2text='';
+    if(hasP2){
+      const {hisTop}=G.judgeP2();
+      const llName=k=>LOVE_LANGS[k]?.n||k;
+      const fishNames=FISH_LOVE.slice(0,2).map(k=>llName(k));
+      const hisNames=hisTop.slice(0,2).map(k=>llName(k));
+      const matchLabel=P2ST.loveMatch==='match'?'完全命中':P2ST.loveMatch==='main'?'主頻道命中':P2ST.loveMatch==='sub'?'部分匹配':'頻道不同';
+      const rdyIcon=P2ST.readiness==='green'?'🟢':P2ST.readiness==='yellow'?'🟡':'🔴';
+      p2text=`
+
+Phase 2｜深水區
+他的愛之語 → ${hisNames.join('、')}
+她需要的   → ${fishNames.join('、')}
+頻道匹配度 → ${matchLabel}
+關係準備度 → ${rdyIcon}`;
+    }
+
+    _shareTxt=`【小魚養成資格審查${hasP2?'｜完整結果':''}】
+${grade.g}級｜${type.n}${p2text}
+
+「${type.share}」
+
+小魚說：${grade.fish_say.split('\n')[0]}
+小魚狀態：${fs.lbl}
+水質綜合分：${a}/100`;
 
     document.getElementById('share-body').innerHTML=`
       <div class="f12 ct3 tc mb14">長按圖片可儲存，或點擊下方按鈕</div>
@@ -1343,97 +1681,104 @@ const G={
       </div>
       <div class="card card-dk">
         <div class="f11 ct3 mb8" style="letter-spacing:.06em">分享短句</div>
-        <div class="f13" style="color:var(--teal-xl);line-height:1.85;font-style:italic">"${type.share}"</div>
+        <div class="f13" style="color:var(--teal-xl);line-height:1.85;font-style:italic">「${type.share}」</div>
       </div>
     `;
     G.go('share');
-    setTimeout(()=>G.drawShare(type,grade,a,fs),200);
+    setTimeout(()=>G.drawShare(type,grade,a,fs,hasP2),200);
   },
 
-  drawShare(type,grade,a,fs){
+
+  drawShare(type,grade,a,fs,hasP2){
     const cvs=document.getElementById('share-cvs');
     if(!cvs)return;
     _shareCvs=cvs;
-    const W=750,H=480;
-    cvs.width=W;cvs.height=H;
-    cvs.style.width='100%';cvs.style.height='auto';
+    const W=750,H=hasP2?560:480;
+    cvs.width=W;cvs.height=H;cvs.style.width='100%';cvs.style.height='auto';
     const ctx=cvs.getContext('2d');
-
     // BG
     const bg=ctx.createLinearGradient(0,0,W,H);
     bg.addColorStop(0,'#040d18');bg.addColorStop(0.5,'#0a1e38');bg.addColorStop(1,'#071520');
     ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-    // Glow
     const gc1=ctx.createRadialGradient(100,H-80,10,100,H-80,240);
     gc1.addColorStop(0,grade.col+'25');gc1.addColorStop(1,'transparent');
     ctx.fillStyle=gc1;ctx.fillRect(0,0,W,H);
-    const gc2=ctx.createRadialGradient(W-80,80,10,W-80,80,200);
-    gc2.addColorStop(0,'rgba(15,60,160,0.22)');gc2.addColorStop(1,'transparent');
-    ctx.fillStyle=gc2;ctx.fillRect(0,0,W,H);
-    // Scanlines
     for(let y=0;y<H;y+=3){ctx.fillStyle='rgba(0,0,0,0.055)';ctx.fillRect(0,y,W,1)}
-    // Border
     rrect(ctx,8,8,W-16,H-16,12);ctx.strokeStyle=grade.col+'40';ctx.lineWidth=1.5;ctx.stroke();
-
     // Grade
     ctx.save();ctx.shadowColor=grade.col;ctx.shadowBlur=40;
-    ctx.font='900 96px "Noto Serif TC",serif';
-    ctx.fillStyle=grade.col;ctx.textAlign='left';ctx.fillText(grade.g,36,136);
-    ctx.restore();
-    ctx.font='bold 24px "Noto Serif TC",serif';ctx.fillStyle='#e8f4ff';ctx.textAlign='left';
-    ctx.fillText(grade.n,36,172);
-    ctx.font='14px "Noto Sans TC",sans-serif';ctx.fillStyle=grade.col;
-    ctx.fillText(`${type.em} ${type.n}`,36,200);
-    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';
-    ctx.fillText(ST.name+' 的養魚資格',36,224);
+    ctx.font='900 96px "Noto Serif TC",serif';ctx.fillStyle=grade.col;
+    ctx.textAlign='left';ctx.fillText(grade.g,36,136);ctx.restore();
+    ctx.font='bold 24px "Noto Serif TC",serif';ctx.fillStyle='#e8f4ff';ctx.fillText(grade.n,36,172);
+    ctx.font='14px "Noto Sans TC",sans-serif';ctx.fillStyle=grade.col;ctx.fillText(`${type.em} ${type.n}`,36,200);
+    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';ctx.fillText(ST.name+' 的養魚資格',36,224);
     // Divider
     ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(36,242);ctx.lineTo(W-36,242);ctx.stroke();
-
     // Mini radar
     drawMR(ctx,130,356,86,grade.col);
-
     // Stat bars
     const sx=295,sw=255,gap=34;
     ['w','f','p','l','a'].forEach((k,i)=>{
       const v=clamp(ST.s[k]);
       const labels=['水溫穩定','飼料偏愛','堅持度','邏輯一致','自我覺察'];
       const y=268+i*gap;
-      ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.42)';ctx.textAlign='left';
-      ctx.fillText(labels[i],sx,y);
+      ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.42)';
+      ctx.textAlign='left';ctx.fillText(labels[i],sx,y);
       rrect(ctx,sx,y+6,sw,9,3);ctx.fillStyle='rgba(255,255,255,0.07)';ctx.fill();
       const fc=v<40?'#e03a3a':v<65?'#f0a030':grade.col;
       rrect(ctx,sx,y+6,Math.max(6,sw*(v/100)),9,3);ctx.fillStyle=fc;ctx.fill();
-      ctx.font='11px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.6)';ctx.textAlign='right';
-      ctx.fillText(v,sx+sw+28,y+14);
+      ctx.font='11px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.6)';
+      ctx.textAlign='right';ctx.fillText(v,sx+sw+28,y+14);
     });
-
-    // Fish state
-    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';ctx.textAlign='left';
-    ctx.fillText('小魚最終狀態',sx,420);
-    ctx.font='bold 15px "Noto Sans TC",sans-serif';ctx.fillStyle=grade.col;
-    ctx.fillText(fs.lbl,sx,440);
-    // Score
-    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';ctx.textAlign='right';
-    ctx.fillText('水質綜合分',W-36,420);
+    // Fish state & score
+    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';
+    ctx.textAlign='left';ctx.fillText('小魚最終狀態',sx,420);
+    ctx.font='bold 15px "Noto Sans TC",sans-serif';ctx.fillStyle=grade.col;ctx.fillText(fs.lbl,sx,440);
+    ctx.font='12px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.38)';
+    ctx.textAlign='right';ctx.fillText('水質綜合分',W-36,420);
     ctx.save();ctx.shadowColor=grade.col;ctx.shadowBlur=16;
     ctx.font='900 40px "Noto Serif TC",serif';ctx.fillStyle=grade.col;
     ctx.fillText(a,W-36-28,455);ctx.restore();
     ctx.font='13px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.35)';
     ctx.fillText('/100',W-36,458);
-
-    // Quote (bottom)
-    const q=type.share;
-    ctx.font='italic 12px "Noto Serif TC",serif';ctx.fillStyle='rgba(255,255,255,0.3)';ctx.textAlign='left';
+    // Phase 2 section
+    if(hasP2&&P2ST.done.length>=4){
+      const p2y=480;
+      ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(36,p2y);ctx.lineTo(W-36,p2y);ctx.stroke();
+      ctx.font='10px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.3)';
+      ctx.textAlign='center';ctx.fillText('Phase 2｜深水區',W/2,p2y+14);
+      const {hisTop}=G.judgeP2();
+      const llName=k=>LOVE_LANGS[k]?.n||k;
+      const llEm=k=>LOVE_LANGS[k]?.em||'';
+      const fishTop=FISH_LOVE.slice(0,2);
+      const fishStr=fishTop.map(k=>llEm(k)+' '+llName(k)).join('  ');
+      const hisStr=hisTop.slice(0,2).map(k=>llEm(k)+' '+llName(k)).join('  ');
+      ctx.font='11px "Noto Sans TC",sans-serif';
+      ctx.fillStyle='rgba(255,255,255,0.4)';ctx.textAlign='left';ctx.fillText('她需要',36,p2y+34);
+      ctx.fillStyle='#4dd9a8';ctx.fillText(fishStr,70,p2y+34);
+      ctx.fillStyle='rgba(255,255,255,0.4)';ctx.textAlign='right';ctx.fillText('你給出',W-36-120,p2y+34);
+      ctx.fillStyle='#f0a030';ctx.fillText(hisStr,W-36,p2y+34);
+      const matchLabel=P2ST.loveMatch==='match'?'完全命中':P2ST.loveMatch==='main'?'主頻道命中':P2ST.loveMatch==='sub'?'部分匹配':'頻道不同';
+      const matchCol=P2ST.loveMatch==='match'||P2ST.loveMatch==='main'?grade.col:'#f0a030';
+      const rdyIcon=P2ST.readiness==='green'?'🟢':P2ST.readiness==='yellow'?'🟡':'🔴';
+      ctx.font='bold 12px "Noto Sans TC",sans-serif';
+      ctx.fillStyle=matchCol;ctx.textAlign='left';ctx.fillText(matchLabel,36,p2y+56);
+      ctx.fillStyle='rgba(255,255,255,0.5)';ctx.textAlign='right';ctx.fillText(rdyIcon+' 關係準備度',W-36,p2y+56);
+    }
+    // Quote
+    const qy=hasP2?H-22:H-38;
+    ctx.font='italic 11px "Noto Serif TC",serif';ctx.fillStyle='rgba(255,255,255,0.22)';
+    ctx.textAlign='left';
     const qw=W-76;let ql='';const qlines=[];
-    for(const ch of `"${q}"`){
+    for(const ch of `「${type.share}」`){
       if(ctx.measureText(ql+ch).width>qw&&ql){qlines.push(ql);ql=ch}else ql+=ch;
     }
     if(ql)qlines.push(ql);
-    qlines.forEach((line,i)=>ctx.fillText(line,36,H-38-(qlines.length-1-i)*18));
-    // Watermark
-    ctx.font='10px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.16)';ctx.textAlign='right';
-    ctx.fillText('小魚養成資格審查',W-18,H-14);
+    qlines.forEach((line,i)=>ctx.fillText(line,36,qy-(qlines.length-1-i)*16));
+    ctx.font='10px "Noto Sans TC",sans-serif';ctx.fillStyle='rgba(255,255,255,0.16)';
+    ctx.textAlign='right';ctx.fillText('小魚養成資格審查',W-18,H-8);
   },
 
   saveImg(){
@@ -1455,6 +1800,392 @@ const G={
     }
   },
 
+  showGateway(gradeKey,typeKey){
+    const isSA=['S','A'].includes(gradeKey);
+    const isB=gradeKey==='B';
+    const isCD=['C','D'].includes(gradeKey);
+
+    const typeKey2=typeKey||'deep';
+    const msgs={
+      'deep:S':`你的水質不錯，你的類型也對。\n\n但深水區測的是另一件事：\n你給的愛，是不是她接得到的那種。\n以及你現在的人生，有沒有她的位置。\n\n這兩件事跟你多成熟無關，\n跟你們是不是同一個頻道有關。`,
+      'deep:A':`你的水質不錯。\n\n深水區會測你給的愛，是不是她需要的那種。\n以及你現在的人生，有沒有她的位置。`,
+      'flirt:S':`你的水質通過了，但你的類型說明了一件事：\n你很擅長讓她心動，\n但心動之後，你能不能讓她安心——\n這是深水區要測的。`,
+      'flirt:A':`你讓她心動的能力沒問題。\n但讓她安心靠近，需要的是另一種東西。`,
+      'flirt:B':`你製造了火花，但她需要的不只是火花。\n\n深水區之前，有一件事值得想清楚：\n你靠近她，是因為你喜歡她，\n還是你喜歡她游向你的感覺？`,
+      'busy:B':`你有意願，但你的水溫不穩定。\n\n深水區之前，有一個問題值得先想：\n你靠近她，是因為你有空間了，\n還是因為你喜歡她在你有空的時候出現？`,
+      'busy:C':`你忙起來會讓她缺氧。\n\n深水區會問你更核心的問題：\n你現在的人生，有沒有她的位置。\n不是有沒有感覺，是有沒有位置。`,
+      'ghost:C':`你讓她一直猜。\n\n深水區會問你更直接的問題。\n如果你現在還不確定自己想要什麼，\n這不是讓她替你等答案的理由。\n現在停下來，也是一種誠實。`,
+      'ghost:D':`你讓她一直猜，你的水質也讓她缺氧。\n\n現在停下來也是一個答案。\n比讓她繼續等更誠實。`,
+      'free:C':`你喜歡自由，但自由不是不用交代。\n\n深水區會問你：\n你現在的人生，有沒有讓她進來的空間。\n不是理論上的，是實際上的。`,
+      'puffer:B':`你的刺讓她受過傷。\n\n深水區裡的問題比較直，\n你的防衛在這裡放不放得下，\n是這裡要測的。`,
+      'puffer:C':`你的防衛讓她很消耗。\n\n在進入深水區之前想一下：\n你繼續，是因為你想改變，\n還是因為你不想讓她走？`
+    };
+    const fallbacks={
+      S:`你的基礎水質通過了。\n\n深水區在等你——\n不是要再考你一次，\n是要讓你看清楚你給的愛，她接不接得到。`,
+      A:`你的水質不錯，還有空間。\n\n深水區測的是：你給的愛，是不是她需要的那種。`,
+      B:`你的水質還在調整中。\n\n深水區不會讓你更有把握，\n但會讓你更清楚自己在哪裡。\n\n你要繼續嗎？`,
+      C:`你的水質目前對她來說有點危險。\n\n深水區會問你更核心的問題。\n這些問題沒有辦法靠表現回答。\n\n你還要繼續嗎？`,
+      D:`你的水質目前對她來說有點危險。\n\n現在停下來，比讓她缺氧更誠實。\n\n你還要繼續嗎？`
+    };
+    const msg=msgs[typeKey2+':'+gradeKey]||fallbacks[gradeKey]||fallbacks.B;
+
+    // Button configs per grade
+    let enterBtn,pauseBtn;
+    if(isSA){
+      enterBtn=`<button class="btn btn-p mb10" onclick="G.enterDeepWater('${typeKey2}')">我準備好了 →</button>`;
+      pauseBtn='';
+    } else if(isB){
+      enterBtn=`<button class="btn btn-p mb10" onclick="G.enterDeepWater('${typeKey2}')">繼續，我想知道 →</button>`;
+      pauseBtn=`<button class="btn btn-s" onclick="G.showPause('${gradeKey}')">我先想一下</button>`;
+    } else {
+      enterBtn=`<button class="btn btn-p mb10" onclick="G.enterDeepWater('${typeKey2}')">繼續，我誠實面對 →</button>`;
+      pauseBtn=`<button class="btn btn-s" onclick="G.showPause('${gradeKey}')">現在停下來</button>`;
+    }
+
+    document.getElementById('gateway-inner').innerHTML=`
+      <div style="font-size:36px;text-align:center;margin-bottom:20px">${isSA?'🔬':isB?'🌊':'⚠️'}</div>
+      <div class="card card-dk mb20">
+        <div class="f11 ct3 mb10" style="letter-spacing:.07em">基礎水質審查完成</div>
+        <div class="f13 ct2" style="white-space:pre-line;line-height:1.9">${msg}</div>
+      </div>`;
+    document.getElementById('gateway-btns').innerHTML=`
+      <div style="margin-top:16px">${enterBtn}${pauseBtn}</div>`;
+    G.go('gateway');
+  },
+
+
+  enterDeepWater(typeKey){
+    // Transition screen with type-specific message
+    const typeMsg={
+      deep:'你進來了。她在觀察。',
+      flirt:'心動之後的考驗，從這裡開始。',
+      busy:'這裡不能用忙碌當理由。',
+      free:'這裡沒有模糊地帶。',
+      puffer:'你的刺，在這裡放不放得下？',
+      ghost:'你選擇繼續。這本身已經說明了一些事。'
+    };
+    const msg=typeMsg[typeKey]||'深水區。她在等你。';
+
+    // Show transition overlay
+    const ov=document.getElementById('ov');
+    document.getElementById('ov-ic').textContent='🌊';
+    document.getElementById('ov-t').textContent=msg;
+    document.getElementById('ov-s').textContent='';
+    ov.classList.add('on');
+    setTimeout(()=>{ov.classList.remove('on');G.go('p2map');},2200);
+  },
+
+  showPause(gradeKey){
+    const isCD=['C','D'].includes(gradeKey);
+    const title=isCD
+      ?`「好。\n\n知道自己還沒準備好，\n比假裝準備好更誠實。\n\n她記著的，是你對待她的方式，\n不是你答了幾分。」`
+      :`「好。\n\n她在等的不是你準備好的那一天，\n是你願意開始想的那一刻。」`;
+    const continueBtn=isCD
+      ?`<button class="btn btn-p mb10" onclick="G.enterDeepWater(G._lastTypeKey||'deep')">🔬 我還是想繼續深水區</button>`
+      :`<button class="btn btn-p mb10" onclick="G.enterDeepWater(G._lastTypeKey||'deep')">🔬 我想好了，進入深水區</button>`;
+
+    document.getElementById('gateway-inner').innerHTML=`
+      <div style="font-size:48px;text-align:center;margin-bottom:20px">🌊</div>
+      <div class="card card-dk mb20">
+        <div class="f13 ct2" style="line-height:2.1;font-style:italic;white-space:pre-line">${title}</div>
+      </div>`;
+    document.getElementById('gateway-btns').innerHTML=`
+      <div style="margin-top:16px">
+        <button class="btn btn-s mb10"
+          onclick="G.goShare(G._lastTypeKey,G._lastGradeKey)">🪣 讓她來看看這個魚缸</button>
+        ${continueBtn}
+        <button class="btn btn-s" onclick="G.restart()">🏠 回首頁重新開始</button>
+      </div>`;
+  },
+
+
+  renderP2ResultBlock(){
+    const el=document.getElementById('p2-result-block');
+    if(!el||P2ST.done.length<4) return;
+    const {hisTop,matchCount,mainMatch,subMatch}=G.judgeP2();
+    const llName=k=>LOVE_LANGS[k]?.n||k;
+    const llEm=k=>LOVE_LANGS[k]?.em||'';
+    const fishTop=FISH_LOVE.slice(0,2);
+    const fishNames=fishTop.map(k=>llName(k));
+
+    // Match label and description
+    let matchLabel,matchCol,matchDesc;
+    if(P2ST.loveMatch==='match'){
+      matchLabel='完全命中';matchCol='var(--teal-l)';
+      matchDesc='你給的，剛好是她最需要的。她不用說，你就已經做了。這種組合不多見。';
+    } else if(P2ST.loveMatch==='main'){
+      matchLabel='主頻道命中';matchCol='var(--teal-l)';
+      matchDesc='你最自然給出的，剛好是她最需要的。次頻道有點不同，但主頻道對了，很多時候已經夠了。';
+    } else if(P2ST.loveMatch==='sub'){
+      matchLabel='部分匹配';matchCol='var(--amber)';
+      matchDesc='你們有一個頻道是重疊的。但她最需要的那個，不是你第一直覺給出的。不是學不會，但需要刻意一點。';
+    } else {
+      matchLabel='頻道不同';matchCol='var(--coral-l)';
+      const hisNames=hisTop.map(k=>llName(k));
+      matchDesc='你給的是'+hisNames.join('、')+'，她需要的是'+fishNames.join('、')+'。你有在付出，但她感覺不到——不是你的錯，是頻道不同。知道這件事，比什麼都重要。';
+    }
+
+    // Readiness
+    const rdyIcon=P2ST.readiness==='green'?'🟢':P2ST.readiness==='yellow'?'🟡':'🔴';
+    const rdyLabel=P2ST.readiness==='green'?'意願、準備、能力同時具備':P2ST.readiness==='yellow'?'意願有，準備或能力還在路上':'意願模糊，或關係能力有明顯缺口';
+    const rdyDesc=P2ST.readiness==='green'
+      ?'你不是說你準備好了，你是真的在想這件事。這種人不多。'
+      :P2ST.readiness==='yellow'
+      ?'你想走進來，但你現在的狀態可能還需要一段時間。她要決定她願不願意等，等的是什麼。'
+      :'你可能喜歡她，但你現在的人生還沒有她的位置。這不是壞事，是時機的問題。';
+
+    el.innerHTML=`
+      <hr class="d">
+      <div class="f11 ct3 mb14" style="letter-spacing:.08em;text-align:center">深水區測試結果</div>
+
+      <div class="card mb14">
+        <div class="f11 ct3 mb12" style="letter-spacing:.07em">💝 愛之語頻道對比</div>
+        <div style="display:flex;margin-bottom:12px">
+          <div style="flex:1;background:rgba(255,255,255,0.04);border-radius:10px 0 0 10px;
+            padding:12px;border:1px solid var(--bb)">
+            <div class="f10 ct3 mb8">小魚最需要</div>
+            ${fishTop.map(k=>`<div class="f12 mb6" style="color:var(--teal-l)">${llEm(k)} ${llName(k)}</div>`).join('')}
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,0.04);border-radius:0 10px 10px 0;
+            padding:12px;border:1px solid var(--bb);border-left:none">
+            <div class="f10 ct3 mb8">你自然給出</div>
+            ${hisTop.slice(0,2).map(k=>`<div class="f12 mb6" style="color:var(--amber)">${llEm(k)} ${llName(k)}</div>`).join('')}
+          </div>
+        </div>
+        <div style="text-align:center;padding:10px;background:rgba(255,255,255,0.03);
+          border-radius:8px;border:1px solid var(--bb)">
+          <div class="f12 w6 mb6" style="color:${matchCol}">${matchLabel}</div>
+          <div class="f12 ct2" style="line-height:1.7">${matchDesc}</div>
+        </div>
+      </div>
+
+      <div class="card mb14">
+        <div class="f11 ct3 mb10" style="letter-spacing:.07em">🔭 關係深度準備度</div>
+        <div style="font-size:26px;text-align:center;margin-bottom:8px">${rdyIcon}</div>
+        <div class="f13 w6 tc mb8" style="color:var(--txt)">${rdyLabel}</div>
+        <div class="f12 ct2" style="line-height:1.7">${rdyDesc}</div>
+      </div>
+
+      <div class="card card-dk mb14" style="text-align:center;padding:18px">
+        <div class="f11 ct3 mb8" style="letter-spacing:.06em">總結</div>
+        <div class="f12 ct2" style="line-height:1.9">
+          水質好，不代表這缸水就是你的水。<br>
+          這兩件事他都通過了，才是真正適合靠近你的人。
+        </div>
+      </div>`;
+  },
+
+  renderP2Map(){
+    document.getElementById('p2-list').innerHTML=P2_LEVELS.map((lv,i)=>{
+      const done=P2ST.done.includes(lv.id);
+      const locked=i>0&&!P2ST.done.includes(P2_LEVELS[i-1].id);
+      return`<div onclick="${!locked?`G.startP2Lv('${lv.id}')`:''}"`+
+        ` style="display:flex;align-items:center;gap:12px;padding:14px 16px;`+
+        `background:${done?'rgba(15,184,122,0.07)':'var(--cbg)'};`+
+        `border:1px solid ${done?'rgba(15,184,122,0.38)':'rgba(15,184,122,0.16)'};`+
+        `border-radius:13px;margin-bottom:10px;`+
+        `cursor:${locked?'not-allowed':'pointer'};opacity:${locked?0.32:1}">`+
+        `<div style="width:34px;height:34px;border-radius:50%;`+
+        `background:${done?'rgba(15,184,122,0.22)':'rgba(255,255,255,0.05)'};`+
+        `display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">`+
+        `${locked?'🔒':lv.ic}</div>`+
+        `<div style="flex:1">`+
+        `<div style="font-size:14px;font-weight:500;margin-bottom:2px">${lv.id==='p1'?'Phase 2-1':lv.id==='p2'?'Phase 2-2':lv.id==='p3'?'Phase 2-3':'Phase 2-4'}｜${lv.name}</div>`+
+        `<div class="f11 ct3">${lv.theme}</div></div>`+
+        `${done?'<span style="font-size:15px">✅</span>':''}</div>`;
+    }).join('');
+    if(P2ST.done.length===4){
+      document.getElementById('p2-list').insertAdjacentHTML('beforeend',
+        `<button class="btn btn-p" style="margin-top:6px" onclick="G.showFinal()">🔬 查看完整資格報告 →</button>`);
+    }
+  },
+
+  startP2Lv(id){
+    const lv=P2_LEVELS.find(l=>l.id===id);
+    ST.curLv=lv; ST.curStep=0; ST.stepPicks=[];
+    document.getElementById('p2lv-title').textContent=`P2-${id.replace('p','')}｜${lv.name}`;
+    document.getElementById('p2lv-sub').textContent=lv.theme;
+    // dots
+    document.getElementById('p2lv-dots').innerHTML=P2_LEVELS.map(l=>{
+      const done=P2ST.done.includes(l.id);
+      const cur=l.id===id;
+      return`<div class="dot ${done?'done':cur?'cur':'off'}"></div>`;
+    }).join('');
+    G.renderP2Step();
+    G.go('p2lv');
+  },
+
+  renderP2Step(){
+    const lv=ST.curLv;
+    const stepData=lv.steps[ST.curStep];
+    const isFirst=ST.curStep===0;
+    const totalSteps=lv.steps.length;
+    const indexed=stepData.opts.map((o,i)=>({...o,origIdx:i}));
+    const shuffled=shuffle(indexed);
+    const pips=Array.from({length:totalSteps},(_,i)=>
+      `<div class="step-pip ${i<ST.curStep?'done':i===ST.curStep?'cur':''}"></div>`).join('');
+
+    // Resolve dynamic scene/q based on prev pick
+    const prev2=ST.stepPicks[ST.curStep-1];
+    const scene2=(!isFirst&&stepData.sceneByPick&&prev2!==undefined)
+      ?(stepData.sceneByPick[prev2]||stepData.sceneByPick[0])
+      :(stepData.scene||'');
+    const qText2=(!isFirst&&stepData.qByPick&&prev2!==undefined)
+      ?(stepData.qByPick[prev2]||stepData.qByPick[0])
+      :(stepData.q||'');
+    const os2=stepData.os||'';
+
+    document.getElementById('p2lv-body').innerHTML=`<div class="fi">
+      ${isFirst?`<div class="insp mb14">
+        <div class="insp-lbl">審查說明</div>
+        <div class="insp-t f12" style="white-space:pre-line">${lv.pre}</div>
+      </div>`:`<div class="card card-dk mb14" style="padding:14px 16px">
+        <div class="f10 ct3 mb6" style="letter-spacing:.07em">你剛才選了</div>
+        <div class="f12 ct2">${lv.steps[ST.curStep-1].opts[ST.stepPicks[ST.curStep-1]]?.t||''}</div>
+      </div>`}
+      <div class="scene mb12">${scene2}</div>
+      ${os2?`<div class="fish-os">${os2}</div>`:''}
+      <div class="step-indicator mb14">
+        ${pips}<span class="step-label">第 ${ST.curStep+1} 步，共 ${totalSteps} 步</span>
+      </div>
+      <div class="f13 ct2 mb14 w5">${qText2}</div>
+      <div id="p2opts-wrap">
+        ${shuffled.map((o,di)=>`
+          <button class="opt" id="p2opt-${di}" onclick="G.pickP2(${o.origIdx},${di},${shuffled.length})">
+            <div class="onum">${di+1}</div><div>${o.t}</div>
+          </button>`).join('')}
+      </div>
+    </div>`;
+  },
+
+  pickP2(origIdx,dispIdx,total){
+    for(let i=0;i<total;i++){
+      const el=document.getElementById('p2opt-'+i);
+      if(el){el.classList.add(i===dispIdx?'chosen':'dim');el.classList.add('locked')}
+    }
+    const lv=ST.curLv;
+    const stepData=lv.steps[ST.curStep];
+    const opt=stepData.opts[origIdx];
+    ST.stepPicks.push(origIdx);
+
+    // Apply ch to main stats
+    Object.entries(opt.ch).forEach(([k,v])=>{ST.s[k]=clamp(ST.s[k]+v)});
+    // Fish state accumulation
+    const fsW=({p1:1.2,p2:1.5,p3:2.0}[lv.id]||1)*(ST.curStep===2?1.6:ST.curStep===1?1.3:1.0);
+    ST.fishSum+=opt.fs*fsW; ST.fishCount+=fsW;
+    ST.fish=Math.min(5,Math.max(0,Math.round(ST.fishSum/Math.max(1,ST.fishCount))));
+    // Type sig
+    const weight=({p1:1.2,p2:1.5,p3:2.0}[lv.id]||1)*({0:1.0,1:1.3,2:1.6}[ST.curStep]||1);
+    (opt.sig||[]).forEach(t=>{if(ST.typeSig[t]!==undefined)ST.typeSig[t]+=2*weight});
+    // Love language tracking per level
+    if(opt.ll){
+      P2ST.loveLang[opt.ll]=(P2ST.loveLang[opt.ll]||0)+1;
+      // Track per-level for consistency scoring
+      if(lv.id==='p1'){
+        if(!P2ST.p1ll) P2ST.p1ll=[];
+        P2ST.p1ll.push(opt.ll);
+      } else if(lv.id==='p2'){
+        if(!P2ST.p2ll) P2ST.p2ll=[];
+        P2ST.p2ll.push(opt.ll);
+      } else if(lv.id==='p3'){
+        if(!P2ST.p3ll) P2ST.p3ll=[];
+        P2ST.p3ll.push(opt.ll);
+      }
+    }
+
+    const nextStep=ST.curStep+1;
+    if(nextStep<lv.steps.length){
+      ST.curStep=nextStep;
+      setTimeout(()=>G.renderP2Step(),380);
+    } else {
+      if(!P2ST.done.includes(lv.id)) P2ST.done.push(lv.id);
+      if(lv.id==='p3') P2ST.p3picks=[...ST.stepPicks];
+      if(lv.id==='p4') P2ST.p4picks=[...ST.stepPicks];
+      const nextIdx=P2_LEVELS.findIndex(l=>l.id===lv.id)+1;
+      const hasNext=nextIdx<P2_LEVELS.length;
+      setTimeout(()=>G.showP2Result(lv),380);
+    }
+  },
+
+  showP2Result(lv){
+    // For p1/p2/p3: use ll-based feedback; for p4: use stepPicks key
+    let fb;
+    if(lv.id==='p4'){
+      const fk=ST.stepPicks.join('')||'_';
+      fb=lv.feedback[fk]||lv.feedback['_'];
+    } else {
+      // Find dominant ll from this level's picks
+      const lvLL=lv.id==='p1'?P2ST.p1ll:lv.id==='p2'?P2ST.p2ll:P2ST.p3ll;
+      const llCount={};
+      (lvLL||[]).forEach(l=>{llCount[l]=(llCount[l]||0)+1;});
+      const topLL=Object.entries(llCount).sort((a,b)=>b[1]-a[1])[0]?.[0]||'_';
+      fb=lv.feedback[topLL]||lv.feedback['_'];
+    }
+    fb=fb||{wc:'wf-o',em:'🌊',t:'記錄中',d:'數據已記錄。',sys:'繼續。'};
+    const remaining=4-P2ST.done.length;
+    document.getElementById('p2res-title').textContent=`${lv.name} 回報`;
+    document.getElementById('p2res-body').innerHTML=`
+      <div class="wfeed ${fb.wc} mb14">
+        <div class="wf-em">${fb.em}</div>
+        <div class="wf-t">${fb.t}</div>
+        <div class="wf-d2">${fb.d}</div>
+        <div class="wf-sys">"${fb.sys}"</div>
+      </div>
+      <div class="card card-dk mb20" style="padding:14px 18px">
+        <div class="f11 ct3" style="letter-spacing:.07em">🔒 數據封存中</div>
+        <div class="f12 ct3 mt8" style="line-height:1.75">
+          ${remaining>0
+            ?`還有 <span style="color:var(--txt)">${remaining} 題</span>，完成後一次揭曉。`
+            :'所有數據已收集完畢。前往生成完整報告。'
+          }
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="G.go('p2map')">繼續 →</button>
+    `;
+    G.go('p2res');
+  },
+
+  judgeP2(){
+    // ── Love language: count with consistency weighting ──
+    const ll=P2ST.loveLang;
+    // Consistency bonus: if same ll appears in both P2-1 and P2-2
+    const p1ll=P2ST.p1ll||[];
+    const p2ll=P2ST.p2ll||[];
+    const weighted={};
+    Object.keys(LOVE_LANGS).forEach(k=>{
+      let score=(ll[k]||0);
+      // Consistency bonus: appears in different pressure contexts
+      if(p1ll.includes(k)&&p2ll.includes(k)) score*=1.5;
+      weighted[k]=score;
+    });
+    const topLL=Object.entries(weighted).sort((a,b)=>b[1]-a[1]);
+    const hisTop=topLL.slice(0,2).map(x=>x[0]).filter(x=>weighted[x]>0);
+    if(hisTop.length===0) hisTop.push('time');// fallback
+    const fishTop=FISH_LOVE.slice(0,2);
+    const matchCount=hisTop.filter(l=>fishTop.includes(l)).length;
+    const mainMatch=fishTop.includes(hisTop[0]);
+    const subMatch=hisTop.length>1&&fishTop.includes(hisTop[1]);
+    if(matchCount===2) P2ST.loveMatch='match';
+    else if(mainMatch) P2ST.loveMatch='main';// main channel matches
+    else if(subMatch) P2ST.loveMatch='sub'; // secondary matches
+    else P2ST.loveMatch='miss';
+
+    // ── Readiness: 3-dimensional from P2-4 ──
+    const p4picks=P2ST.p4picks||[];
+    // Intention (step 1): 0=承認不穩定調整中(2), 2=誠實不確定(1), 1/3=敷衍迴避(0)
+    const intentScore=p4picks[0]===0?2:p4picks[0]===2?1:0;
+    // Preparation (step 2): 0=願意且雙向(2), 1=願意(1), 2/3=迴避否認(0)
+    const prepScore=p4picks[1]===0?2:p4picks[1]===1?1:0;
+    // Capacity (P2-3 performance): both steps chose time/touch = 2, one = 1, none = 0
+    const p3ll=P2ST.p3ll||[];
+    const capScore=p3ll.filter(l=>l==='touch'||l==='time').length;
+    const capFinal=Math.min(2,capScore);
+    const totalReady=intentScore+prepScore+capFinal;
+    P2ST.readiness=totalReady>=5?'green':totalReady>=3?'yellow':'red';
+    return {hisTop,matchCount,mainMatch,subMatch,intentScore,prepScore,capFinal};
+  },
+
+
   restart(){
     Object.assign(ST,{
       name:'神秘玩家',s:{w:50,f:50,p:50,l:50,a:50},fish:1,
@@ -1464,6 +2195,7 @@ const G={
     });
     document.getElementById('name-in').value='';
     _shareCvs=null;_shareTxt='';
+    Object.assign(P2ST,{done:[],loveLang:{},p1ll:[],p2ll:[],p3ll:[],p3picks:[],p4picks:[],readiness:'',loveMatch:''});
     G.go('home');
   }
 };
