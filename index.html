@@ -441,16 +441,6 @@ hr.d{border:none;border-top:1px solid var(--bb);margin:14px 0}
 
 </div>
 
-<!-- PHASE 1 GATEWAY -->
-<div class="scr" id="s-gateway">
-<div class="topbar">
-  <button class="back" onclick="G.go('final')">←</button>
-  <div class="tb-mid"><div class="tb-t">深水區入口</div></div>
-  <div style="width:34px"></div>
-</div>
-<div class="pad fi" id="gateway-body" style="display:flex;flex-direction:column;flex:1"></div>
-</div>
-
 <div class="ov" id="ov">
   <div class="ov-inner">
     <div class="ov-ic" id="ov-ic">🔓</div>
@@ -650,7 +640,7 @@ const LEVELS=[
 },
 
 {id:4, name:'高壓水溫測試', theme:'她說話更直接了', ic:'🌡️',
- pre:'第四關。\n水溫進階測試。\n\n前三關壓力比較低，現在她說話更直接了。\n這一關對應第一關——同樣的人，在壓力更大的時候，還是同一個你嗎？',
+ pre:'第四關。\n水溫進階測試。\n\n她記得你消失的次數，比你記得的多。\n\n前三關壓力比較低，現在她說話更直接了。\n這一關對應第一關——同樣的消失，同樣的人，但她現在說出來了。\n你還是同一個你嗎？',
  steps:[
   {scene:'她說：「我有時候會不確定，你消失的時候是真的忙，還是只是不想講話。」',
    os:'我不是在責怪你，我只是把我真實的感受說出來。',
@@ -850,7 +840,8 @@ const LOVE_LANGS={
   acts:{n:'服務行動',em:'🔧'},
   gifts:{n:'接受禮物',em:'🎁'}
 };
-const FISH_LOVE=['touch','time','words','acts','gifts'];
+// 小魚偏好固定：身體接觸 + 精心時刻（用來測曖昧對象）
+const FISH_LOVE=['touch','time'];
 
 const P2_LEVELS=[
 {id:'p1',name:'你主動給予的方式',theme:'愛之語偵測 I',ic:'💝',
@@ -1134,6 +1125,52 @@ const GRADES={
     fish_say:'你的魚缸門開著，\n但我不知道是歡迎我還是忘記關。\n我在門口等了一下，\n決定先回大海想想。'}
 };
 
+// ── FISH_SAY: type × grade ─────────────────────────────────────
+const FISH_SAY={
+  deep:{
+    S:'你的水質我驗過了，清澈、穩定、氧氣充足。\n我願意住進來。\n不要讓我後悔。',
+    A:'你大部分時間讓我覺得我可以呼吸。\n偶爾有點渾濁，但你知道怎麼換水。\n可以繼續。',
+    B:'你說得出來，但你做的時候我還在等。\n不是壞事，是你還在練習讓話跟上行動。\n我知道你不是在糊弄我。',
+    C:'你很能說，我感覺得到你是真的有在想。\n但我需要的不是你想清楚，是你做出來。\n我在看。',
+    D:'你的深度我感受到了。\n但你說的那些，我還沒看到它發生。\n你要繼續說，還是開始做？'
+  },
+  busy:{
+    S:'你給的空間足夠，你回來的方式也對。\n我需要知道你有在，你讓我知道了。\n現在繼續忙吧。',
+    A:'你忙的時候我有點猜，但你回來的方式讓我覺得可以等。\n訊號稍微穩定一點，我就不用一直猜了。',
+    B:'你不在的時候，我不確定你是忙還是不想。\n你回來的時候，我也不確定是你想回還是你有空了。\n你能不能讓我少猜一點？',
+    C:'你消失的方式，比你出現的方式更讓我記著。\n不是要你全天在，是要你讓我知道你去哪了。\n這樣我才知道我等的是什麼。',
+    D:'你太忙了，忙到沒有位置放我。\n不是指責，是陳述。\n你先整理你的魚缸，再說養魚。'
+  },
+  flirt:{
+    S:'你讓我心跳加速，你也讓我覺得心跳完還有地方降落。\n這兩件事你都做到了，不容易。\n繼續。',
+    A:'你製造了火花，也給了一點安全感。\n安全感那一塊還在長大中，但你有在給。\n我可以等它長大。',
+    B:'你的魚缸燈光效果一流，我一直知道。\n但我在燈光裡待久了，需要知道燈關掉你還在不在。\n你還在嗎？',
+    C:'你讓我心動，然後你消失，然後你回來繼續讓我心動。\n這個循環很好看，但我住不進去。\n燈光不等於空氣。',
+    D:'你很好看。\n但我需要的不是好看，是能呼吸。\n你的魚缸裡有氧氣嗎？'
+  },
+  free:{
+    S:'你喜歡自由，你也讓我自由。\n但你讓我知道你有在，這是最難的那件事你做到了。\n可以靠近。',
+    A:'你不喜歡被定義，我也不需要定義你。\n但我需要知道你有沒有留一扇門給我。\n那扇門現在是開著的。',
+    B:'你的自由讓我喜歡你，也讓我不確定我在不在你的世界裡。\n你靠近我的時候我能感覺到，你不在的時候我感覺不到你。\n這個差距有點大。',
+    C:'你自由，但我不想是你保留選項裡的一個。\n如果我不是首選，請你告訴我。\n我可以接受，但我不想一直猜。',
+    D:'你的門開著，但我不知道是歡迎我還是你忘記關。\n我在門口看了一下，決定先回去。\n你想清楚再開門。'
+  },
+  puffer:{
+    S:'你的刺還在，但你讓我靠近的時候，你有把刺收起來一點。\n我記著那幾次。\n那是你真實的樣子。',
+    A:'你防衛，但你不是每次都防衛。\n你有在嘗試讓我靠近，我感覺得到。\n繼續。不用全部放下，先放一點。',
+    B:'你在意我，我知道。\n但你在意我的時候反而縮回去，讓我花力氣理解你的刺。\n我願意理解，但你要讓我靠近。',
+    C:'你的刺很多，我試著靠近，但靠近就被刺到。\n不是要你假裝沒刺，是要你告訴我哪裡可以靠近。\n你知道哪裡嗎？',
+    D:'你用刺保護自己，但你的刺也把我隔在外面。\n我沒有辦法從外面幫你，你得讓我進來。\n你願意嗎？'
+  },
+  ghost:{
+    S:'你選擇了留下來說清楚，這不是你的慣性。\n我知道。\n這件事我記著。',
+    A:'你不主動，但你在的時候讓我覺得你有在。\n我不需要你每次都第一個說，但需要知道你有在。\n大部分時候我感覺得到。',
+    B:'你不說，但你沒走。\n我不確定這是因為你想在，還是因為你沒有想走。\n這兩個對我來說不一樣。',
+    C:'你的門開著，但你沒有邀請我。\n我不知道進去是不是可以的。\n你能不能說一聲？',
+    D:'你讓我一直猜，我猜了很久。\n最讓我缺氧的不是你不來，是你不走。\n你要進來還是要走，告訴我一個。'
+  }
+};
+
 // ================================================================
 // STATE
 // ================================================================
@@ -1141,6 +1178,9 @@ const ST={
   name:'神秘玩家',
   s:{w:50,f:50,p:50,l:50,a:50},
   fish:1,
+  fishSum:0,
+  fishCount:0,
+  fishPeak:0,
   done:[],       // completed level ids
   picks:{},      // {cKey: optionIndex}
   typeSig:{deep:0,busy:0,flirt:0,free:0,puffer:0,ghost:0},
@@ -1184,7 +1224,8 @@ function consistencyScore(){
   const pairs=[
     {a:'c1s1', b:'c4s1', stat:'w'},  // disappear → water temp
     {a:'c3s1', b:'c5s1', stat:'p'},  // persistence under pressure
-    {a:'c2s1', b:'c6s1', stat:'f'},  // remembering her vs self-awareness
+    // 追蹤她說過的事（c2s2） vs 你是否覺察到她替你承擔（c6s1）
+    {a:'c2s2', b:'c6s1', stat:'a'},
   ];
   let consistent=0, inconsistent=0;
   pairs.forEach(({a,b,stat})=>{
@@ -1348,6 +1389,7 @@ const G={
     ST.fishSum+=opt.fs*fsWeight;
     ST.fishCount+=fsWeight;
     ST.fish=Math.min(5,Math.max(0,Math.round(ST.fishSum/Math.max(1,ST.fishCount))));
+    ST.fishPeak=Math.max(ST.fishPeak,ST.fish);
 
     // Type signals — weighted by level and step
     const LW={1:1.0,2:1.0,3:1.2,4:1.5,5:1.5,6:2.0};
@@ -1499,6 +1541,24 @@ const G={
     const cs=consistencyScore();
     const isConsistent=cs>=60;
 
+    // trapCount insight
+    const tc=ST.trapCount;
+    const trapBlock=tc===0
+      ?`<div class="card card-hi mb14"><div class="f11 ctl mb8" style="letter-spacing:.06em">🎣 誘餌命中偵測</div><div class="f12 ct2" style="line-height:1.78">你沒有選任何一個「看起來是對的、但實際上在迴避」的選項。你的直覺沒有在糊弄她。</div></div>`
+      :tc<=2
+      ?`<div class="card card-amb mb14"><div class="f11 cam mb8" style="letter-spacing:.06em">🎣 誘餌命中偵測</div><div class="f12 ct2" style="line-height:1.78">你選了 ${tc} 次看起來對、但實際上在迴避的選項。你知道怎麼讓關係看起來平順，有時候代價是她感覺不到真實的你。</div></div>`
+      :`<div class="card card-warn mb14"><div class="f11 cco mb8" style="letter-spacing:.06em">🎣 誘餌命中偵測</div><div class="f12 ct2" style="line-height:1.78">你選了 ${tc} 次看起來對、但實際上在迴避的選項。你在用「表現」代替「真實」——她在等的是你，不是你的最佳版本。</div></div>`;
+
+    // fishPeak line
+    const peakLine=ST.fishPeak>=4
+      ?'<div class="f11" style="color:var(--coral-l);margin-top:6px">她有一度差點走了。</div>'
+      :ST.fishPeak>=3
+      ?'<div class="f11" style="color:var(--amber);margin-top:6px">她曾進入過警戒。</div>'
+      :'';
+
+    // fish_say: type × grade
+    const fishSayText=(FISH_SAY[typeKey]||{})[gradeKey]||grade.fish_say;
+
     document.getElementById('final-body').innerHTML=`
       <div class="tc mb20">
         <div class="grade-big" style="color:${grade.col};text-shadow:0 0 48px ${grade.sh}">${grade.g}</div>
@@ -1532,7 +1592,8 @@ const G={
       <div class="fpill mb14" style="border-color:${fs.col}40">
         <div class="fpill-ic" style="font-size:26px">${fs.ic}</div>
         <div><div class="fpill-lbl">小魚最終狀態</div>
-        <div class="fpill-val" style="color:${fs.col};font-size:15px">${fs.lbl}</div></div>
+        <div class="fpill-val" style="color:${fs.col};font-size:15px">${fs.lbl}</div>
+        ${peakLine}</div>
       </div>
 
       <div class="radar-wrap mb14">
@@ -1556,9 +1617,10 @@ const G={
         <div class="f11 cco mb8" style="letter-spacing:.06em">你讓她缺氧的風險</div>
         <div class="f12 ct2" style="line-height:1.78">${type.risk}</div>
       </div>
+      ${trapBlock}
       <div class="card card-dk mb14">
         <div class="f11 ct3 mb8" style="letter-spacing:.06em">🐠 小魚說</div>
-        <div class="f12" style="color:var(--teal-l);line-height:1.85;font-style:italic;white-space:pre-line">${grade.fish_say}</div>
+        <div class="f12" style="color:var(--teal-l);line-height:1.85;font-style:italic;white-space:pre-line">${fishSayText}</div>
       </div>
       <div class="card mb20">
         <div class="f11 ct3 mb12" style="letter-spacing:.07em">水質五維分析</div>
@@ -2085,6 +2147,7 @@ ${grade.g}級｜${type.n}${p2text}
     const fsW=({p1:1.2,p2:1.5,p3:2.0}[lv.id]||1)*(ST.curStep===2?1.6:ST.curStep===1?1.3:1.0);
     ST.fishSum+=opt.fs*fsW; ST.fishCount+=fsW;
     ST.fish=Math.min(5,Math.max(0,Math.round(ST.fishSum/Math.max(1,ST.fishCount))));
+    ST.fishPeak=Math.max(ST.fishPeak,ST.fish);
     // Type sig
     const weight=({p1:1.2,p2:1.5,p3:2.0}[lv.id]||1)*({0:1.0,1:1.3,2:1.6}[ST.curStep]||1);
     (opt.sig||[]).forEach(t=>{if(ST.typeSig[t]!==undefined)ST.typeSig[t]+=2*weight});
@@ -2200,7 +2263,7 @@ ${grade.g}級｜${type.n}${p2text}
   restart(){
     Object.assign(ST,{
       name:'神秘玩家',s:{w:50,f:50,p:50,l:50,a:50},fish:1,
-      fishSum:0,fishCount:0,
+      fishSum:0,fishCount:0,fishPeak:0,
       done:[],picks:{},typeSig:{deep:0,busy:0,flirt:0,free:0,puffer:0,ghost:0},
       trapCount:0,curLv:null,curStep:0,stepPicks:[]
     });
